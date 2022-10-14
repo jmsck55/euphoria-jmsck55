@@ -1,0 +1,100 @@
+--****
+-- === win32/window.exw
+--
+-- A Standard Windows Window coded at the primitive API level
+-- Most Euphoria programmers should simply use Win32Lib, wxWidgets, EuGTK or EuIUP!
+--
+
+include std/os.e
+include std/dll.e
+include std/machine.e
+include std/math.e
+include std/error.e
+
+include winstruct.ew
+
+
+
+atom 
+	wav_file = allocate_string(getenv("windir")&`\Media\tada.wav`),
+	Euphoria = allocate_string("A Plain Vanilla Window using Euphoria!"),
+	my_title = allocate_string("Euphoria for Windows"),
+	ps = allocate(64),
+	rect = allocate(16) 
+ 
+-- callback routine to handle Window class
+function WndProc(atom hwnd, atom iMsg, atom wParam, atom lParam)
+	atom hdc
+	
+	if iMsg = WM_CREATE then
+		c_proc(PlaySound, {wav_file,
+				   NULL,
+				   or_bits(SND_FILENAME, SND_ASYNC)})
+		return 0
+
+	elsif iMsg = WM_PAINT then
+		hdc = c_func(BeginPaint, {hwnd, ps})
+		c_proc(GetClientRect, {hwnd, rect})
+		c_proc(DrawText, {hdc, Euphoria, -1, rect, 
+				  or_all({DT_SINGLELINE, DT_CENTER, DT_VCENTER})})
+		c_proc(EndPaint, {hwnd, ps})
+		return 0
+
+	elsif iMsg = WM_DESTROY then
+		c_proc(PostQuitMessage, {0})
+		return 0
+	
+	end if
+	
+	return c_func(DefWindowProc, {hwnd, iMsg, wParam, lParam})
+end function
+
+
+procedure WinMain()
+	-- main routine 
+	atom hwnd
+	atom icon_handle
+
+	atom wndclass = allocate(SIZE_OF_WNDCLASS,1)
+	atom msg = allocate(SIZE_OF_MESSAGE,1)
+	atom szAppName = allocate_string("HelloWin",1)
+
+	atom id = routine_id("WndProc")
+	if id = -1 then
+		crash("routine_id failed!")
+	end if
+	atom WndProcAddress = call_back(id) -- get address for callback
+	
+
+	atom class = register_class( wndclass, WndProcAddress, szAppName )
+	if class = 0 then
+		crash("Couldn't register class")
+	end if
+	hwnd = c_func(CreateWindow, {
+		0,                       -- extended style
+		szAppName,               -- window class name
+		my_title,                -- window caption
+		WS_OVERLAPPEDWINDOW,     -- window style
+		CW_USEDEFAULT,           -- initial x position
+		CW_USEDEFAULT,           -- initial y position
+		CW_USEDEFAULT,           -- initial x size
+		CW_USEDEFAULT,           -- initial y size
+		NULL,                    -- parent window handle
+		NULL,                    -- window menu handle
+		0 ,                 --hInstance // program instance handle
+		NULL})              -- creation parameters
+	if hwnd = 0 then
+		crash("Couldn't CreateWindow")
+	end if
+	c_proc(ShowWindow, {hwnd, SW_SHOWNORMAL})
+	c_proc(UpdateWindow, {hwnd})
+
+	-- message loop
+	while c_func(GetMessage, {msg, NULL, 0, 0}) do
+		c_proc(TranslateMessage, {msg})
+		c_proc(DispatchMessage, {msg})
+	end while
+end procedure
+
+WinMain()
+

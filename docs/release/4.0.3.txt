@@ -1,0 +1,29 @@
+== Version 4.0.3 June 23, 2011
+
+=== Bug Fixes
+
+* [[ticket:655]] Integer values stored as doubles weren't being correctly
+  coerced back to euphoria integers in translated code.
+* [[ticket:656]] Translated ##[[:not_bits]]## made incorrect type assumptions
+* [[ticket:662]] Switches with all integer cases, but with a range of greater than
+  1024 between the biggest and smallest were interpreted incorrectly.
+* [[ticket:661]] fixed translator linking to use comctl32 library on windows
+* [[ticket:663]] Translator ##-plat## switch now uses ##WINDOWS## instead of ##WIN##.
+* [[ticket:666]] fixed to allow integers stored as doubles in be_sockets.c.
+* [[ticket:654]] removed internal use-only standard library routines and constants from the user documentation.
+* [[ticket:667]] Fixed optimization of translated IF when the conditions were known
+  to be false.
+* [[ticket:654]] Removed from documentation the internal workings of Machine Level Access and reorganized Documentation.
+* [[ticket:676]] Changed search order for [[:locate_file]]
+* [[ticket:675]] Fixed machine crash in [[:splice]] when splicing an atom before beginning
+  of sequence or after end
+* [[ticket:665]] Windows 95 and above is supported.  For using sockets you must have Windows Sockets 2.2
+* [[ticket:680]] Fixed ##[[:socket]]## type checking.
+* [[ticket:720]] Fix propagation of ##public include## among reincluded files
+ 
+=== Enhancements
+
+* Minor changes to eutest output to read its console output
+* The interpreter and programs created with the translator (for WATCOM only) will now run on older versions of Windows that don't support
+  sockets unless this program //uses// sockets.
+* New math functions ##[[:larger_of]]## and ##[[:smaller_of]]##

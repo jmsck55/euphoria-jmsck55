@@ -1,0 +1,12 @@
+After completing the installation:
+
+   1. Reboot your system (if you changed your environment).
+
+   2. View docs\euphoria.pdf or docs\html\index.html
+      (if you chose to install the documentation).
+
+   3. Experiment with simple command-line programs first.
+      See the tutorial directory
+
+   4. Join other Euphoria programmers on the OpenEuphoria
+	    community website, http://openeuphoria.org.

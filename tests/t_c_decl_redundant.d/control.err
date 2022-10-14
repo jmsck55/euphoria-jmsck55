@@ -1,0 +1,19 @@
+t_c_decl_redundant.e:7
+<0074>:: Errors resolving the following references:
+	'x' (t_c_decl_redundant.e:7) has been declared more than once.
+		in x1.e
+		in x2.e
+
+? x
+  ^
+
+
+--- Defined Words ---
+EU4
+EU4_0
+EU4_0_3
+WINDOWS
+WIN32
+CONSOLE
+EUI
+-------------------

@@ -1,0 +1,6 @@
+t_c_ifdef_bad.e:5
+<0075>:: Expecting 'end ifdef' to match 'ifdef' on line 4
+	end if
+	     ^
+
+

@@ -1,0 +1,17 @@
+t_c_qualpredef.e:4
+<0074>:: Errors resolving the following references:
+	'puts' (t_c_qualpredef.e:4) was not declared in 't_c_qualpredef.e'.
+
+fail:puts(1, 1)
+        ^
+
+
+--- Defined Words ---
+EU4
+EU4_0
+EU4_0_3
+WINDOWS
+WIN32
+CONSOLE
+EUI
+-------------------

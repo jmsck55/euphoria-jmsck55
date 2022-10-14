@@ -1,0 +1,11 @@
+# Example PO translation file
+#
+
+
+hello Hello
+world World
+greeting %s, %s!
+long_message Hello %s, &
+I hope you enjoy this email!
+
+# End of example PO

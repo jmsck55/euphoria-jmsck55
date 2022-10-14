@@ -1,0 +1,65 @@
+.\"                                      Hey, EMACS: -*- nroff -*-
+.\" First parameter, NAME, should be all caps
+.\" Second parameter, SECTION, should be 1-8, maybe w/ subsection
+.\" other parameters are allowed: see man(7), man(1)
+.TH EUBIND 1 "January 8, 2008"
+.\" Please adjust this date whenever revising the manpage.
+.\"
+.\" Some roff macros, for reference:
+.\" .nh        disable hyphenation
+.\" .hy        enable hyphenation
+.\" .ad l      left justify
+.\" .ad b      justify to both left and right margins
+.\" .nf        disable filling
+.\" .fi        enable filling
+.\" .br        insert line break
+.\" .sp <n>    insert n+1 empty lines
+.\" for manpage-specific macros, see man(7)
+.SH NAME
+bind \- Creates standalone euphoria executables
+.SH SYNOPSIS
+.B shroud
+.RB [\| \-i
+.IR path ]
+.RB [\| \-c
+.IR conf-file ]
+.RB [\| \-d
+.IR word ]
+.RI " files" ...
+.br
+.SH DESCRIPTION
+This manual page documents briefly the
+.B bind
+command.  bind is used for creating standalone executables from euphoria 
+programs.  The code is parsed and converted to euphoria IL code, and combined
+with the compiled backend.  The result is a file that can be run on its own,
+without the euphoria interpreter.
+.PP
+.SH OPTIONS
+.TP
+.B \-i path
+Specifies an additional include path to the interpreter.
+.TP
+.B \-c path-to-eu.cfg
+Specifies a configuration file to be read in to specify additional
+include paths for the interpreter.
+.TP
+.B -d tag 
+Defines a tag as being set. Tags are processed by 
+.B ifdef
+blocks.
+.\" TeX users may be more comfortable with the \fB<whatever>\fP and
+.\" \fI<whatever>\fP escape sequences to invode bold face and italics, 
+.\" respectively.
+.SH SEE ALSO
+.BR eui (1),
+.BR euc (1),
+.BR shroud (1)
+.BR eub (1)
+.br
+The programs are documented fully
+in /usr/share/euphoria/html
+.SH AUTHOR
+euphoria was written by Robert Craig <rds@rapideuphoria.com>.
+.PP
+This manual page was written by Matt Lewis <matthewwalkerlewis@gmail.com>.

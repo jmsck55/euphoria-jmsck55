@@ -1,0 +1,533 @@
+== Euphoria Internals ==
+
+The interpreter has four binary components:
+* Interpreter
+* Translator
+* Backend  
+* Library
+
+The Euphoria interpreter has two parts: the frontend and the backend. The
+**frontend** is a parser that converts source-code into a set of
+**Intermediate Language** (IL) instructions. The **backend** then takes the
+IL instructions and executes the program.
+
+When the //interpreter// executes source-code, the frontend parses and prepares
+the code, and then the backend executes the code.
+
+When the //shrouder// executes source-code, only the frontend is run producing
+an ##.il## file. This ##.il## file may be run by the backend as an
+independent step to execute the program.
+
+When the //binder// executes source-code, the ##.il## instructions produced
+by the frontend are combined with the backend to produce a stand-alone
+executable program. The executable program may then be run independetly at any
+time.
+
+When the //translator// executes source-code, the ##.il## instructions are
+translated into C-code. This C-code is compiled with an installed C compiler
+producing an executable program.
+
+The //library// is called by the backend for the many builtins included in 
+Euphoria.
+
+=== The Euphoria Data Structures ===
+
+==== The Euphoria representation of a Euphoria Object =====
+
+Every Euphoria object is stored as-is.  A special unlikely floating point value 
+is used for ##NOVALUE##.  ##NOVALUE## signifies that a variable has not been 
+assigned a value or the end of a sequence.
+
+==== The C Representation of a Euphoria Object =====
+
+Every Euphoria object is either stored as is, or as an encoded pointer.  A 
+Euphoria ##integer## is stored in a 32-bit signed integer.  If the number is too
+big for a Euphoria ##integer##, it is assigned to a 64-bit double float in a 
+structure and an encoded pointer to that structure is stored in the said 32-bit 
+memory space.  Sequences are stored in a similar way.
+
+{{{
+
+ 32 bit number range:
+  0X8      0XA      0XC      0XE      0X0      0X2      0X4      0X6      0X8
+-4*2^29  -3*2^29  -2*2^29-1  -2^29   0*2^29   1*2^29   2*2^29   3*2^29 4*2^29 
+   *--------*--------*--------*--------*--------*--------*--------*--------o
+                     o NOVALUE = -2*2^29-1
+		     o<-----------ATOM_INT---------[-2*2^29..4*2^29)------>o
+	    |<----------------ATOM_DBL-------[-3*2^29..4*2^29)------------>o
+-->|        |<-- IS_SEQUENCE [-4*2^29..-3*2^29)
+-->|                 o<--- IS_DBL_OR_SEQUENCE [-4*2^29..-2*2^29-1)
+-->|sequence|<-------
+            |<------------------  atom   --------------->|
+    ------->| double |<--------  
+                     |<--------     integer    --------->|
+   |<--------------------- object ---------------------->|		     
+
+}}}
+
+
+Euphoria integers are stored in object variables as-is.  An object variable is a
+four byte signed integer.  Legal integer values for Euphoria integers are 
+between -1,073,741,824 ( -2^^30^^ ) and +1,073,741,823 ( 2^^30^^-1 ).
+Unsigned hexadecimal numbers from C000_0000 to FFFF_FFFF are the negative 
+integers and numbers from 0000_0000 to 3FFF_FFFF are the positive integers.  The
+hexadecimal values not used as integers are thus 4000_0000 to BFFF_FFFF.  Other 
+values are for encoded pointers.  Pointers are always 8 byte aligned.  So a 
+pointer is stored in 29-bits instead of 32 and can fit in a hexadecimal range 
+0x2000_0000 long. The pointers are encoded in such a way that their encoded values 
+will never be in the range of the integers. Pointers to sequence structures 
+(struct s1) are encoded into a range between 8000_0000 to 9FFF_FFFF.  Pointers 
+to structures for doubles (struct d) are encoded into a range between A000_0000 
+to BFFF_FFFF. A special value NOVALUE is at the end of the range of encoded 
+pointers is BFFF_FFFF and it signifies that there is no value yet assigned to a 
+variable and it also signifies the end of a sequence.  In C, values of this type
+are stored in the 'object' type.  The range 4000_0000 to 7FFF_FFFF is unused.
+
+A double structure 'struct d' could indeed contain a value that is legally in 
+the range of a Euphoria integer.  So the encoded pointer to this structure is 
+recognized by the interpreter as an 'integer' but in this internals document 
+when we say Euphoria integer we mean it actually is a C integer in the legal 
+Euphoria integer range.
+
+
+=== The C Representations of a Euphoria Sequence and a Euphoria Atom =====
+
+{{{
+// Sequence Header 
+struct s1
+{
+ object_ptr base;     // base is such that base[1] is the first element
+ long length;         // this is the sequence length
+ long ref;            // ref is the number of as virtual copies of this sequence
+ long postfill;       // is how many extra objects could fit at the end of base
+ cleanup_ptr cleanup; // this is a pointer to a Euphoria routine that is run 
+                      // just before the sequence is freed.
+}
+
+}}}
+
+However, we allocate more than this structure.  Inside the allocated data but past the structure,
+there also is 
+an area of 'pre free space'; sequence data pointed to by base[1] to base[$], $ being the length;
+a NOVALUE terminator for the sequence, 
+and an area of post fill space.  In memory, immediately following the structure there is the following data stored:
+
+{{{
+ object pre_fill_space[]; // could have 0 (not exist) or more elements before used data
+ object base[1..$];       // sequence members pointed to by base
+ object base[$+1];        // a magic number terminating the sequence members (NOVALUE)
+ object post_fill_space[];// could have 0 (not exist) or more elements after used data
+}}} 
+
+Taken together these are what get represented in memory.
+|  base  | length |   ref  |postfill| cleanup|  pre fill space | base[1..$] | ##NOVALUE## | post fill space  |
+
+By their nature, sequences are variable length, dynamic entities and so the C structure needs to
+cater for this. When a sequence is created, we allocate enough RAM for the combined header and the
+initial storage for the elements. 
+
+|= Field    |= Description |
+|  base     | This contains the address of the first element less the
+              length of one element. Thus ##base[1]## points to the first
+              element and ##base[0]## points to a fictitious element just
+              before the first one, which is never used.\\
+              Initially, ##base## contains the address of the last member of
+              the sequence header but 
+              as the sequence is resized, it can point to the last member or anywhere after.
+|  length   | Contains the current number of elements in the sequence.
+|  ref      | Contains the count of references to this sequence. Only when
+              this is zero, can the RAM used by the sequence be returned to
+              the system for reuse. 
+|  postfill | The size of 'post fill space' in element spaces.  Rather than using bytes,
+              postfill is measured in objects which are each address wide elements.  
+              If this is non-zero, we can append to
+              the sequence with at most ##postfill## new elements before needing
+              to reallocate RAM.\\
+|  cleanup  | If not null, it points to a routine that is called immediately before
+              the sequence is deleted.\\
+| pre fill space | There are 0 or more spaces before base[1].  We can calculate
+              the free space in *objects* at the front of a sequence, s1, in C by\\ 
+              ##(&s1.base[1] - (object_ptr)(1+&s1))##.\\  
+              In EUPHORIA, you will have to divide by the size of a C_POINTER on the difference.
+              When elements are removed from the front of a sequence, we simply
+              adjust the address in ##base## to point to the new //first// element
+              and reduce the ##length## count.  
+              If we want to prepend and this pre fill space has some positive size, then we make room by decrementing ##base## and increment the ##length##.  The new data is then assigned to ##base##[1].
+| base[1]..base[length] sequence data |      This is actual data.
+| base[$+1]  |      This is always set to ##NOVALUE##.
+| post fill space | There are 0 or more spaces after ##base##[##length##+1].  The number of spaces is stored in 
+                    ##postfill##.  If ##postfill## is non-zero we can append by incrementing the ##length##, decrementing ##postfill## and assigning the new data to ##base##[$].
+                    When we remove from the end of the sequence, we increment ##postfill## and
+                    decrement the ##length##.
+
+
+{{{
+// Atom Header
+struct d
+{
+ double dbl;          // the actual value of a double number.
+ long ref;            // ref is the number of virtual copies of this double
+ cleanup_ptr cleanup; // this is a pointer to a Euphoria routine that is run 
+                      // just before the sequence is freed.
+}
+}}}
+
+
+Now offset of the 'ref' in struct d must be the same as the offset of the 'ref' 
+in struct s1.  To this end, the 64bit implementation of 4.1 has these members in a different order.
+
+=== The Euphoria Object Macros and Functions ===
+
+==== Description
+
+The macros are imperfect.  For example, ##IS_SEQUENCE(NOVALUE)## returns 
+##TRUE## and ##IS_ATOM_DBL## will return ##TRUE## for integer values as well 
+as encoded pointers to
+'struct d's.   This is why there is an order that these tests are made: We test 
+##IS_ATOM_INT## and if that fails we can use ##IS_ATOM_DBL## and then that will 
+only be true if we pass an encoded pointer to a double.  We must be sure that 
+something is not ##NOVALUE## before we use ##IS_SEQUENCE## on it.
+
+// Often we know foo is not NOVALUE before getting into this://
+
+{{{
+// object foo
+if (IS_ATOM_INT(foo)) {
+ // some code for a Euphoria integer
+} else if (IS_ATOM_DBL(foo)) {
+ // some code for a double
+} else {
+ // code for a sequence foo
+}
+}}}
+
+A sequence is held in a 'struct s1' type and a double is contained in a 
+'struct d'.
+
+
+=== Type Value Functions and Macros
+
+@[:internals:IS_ATOM_INT|]
+==== IS_ATOM_INT
+<eucode>
+<internal> int IS_ATOM_INT( object o )
+</eucode>
+
+===== Returns
+true if object is a Euphoria integer and not an encoded pointer.
+
+===== Note
+##IS_ATOM_INT## will return true even though the argument is out of the 
+Euphoria integer range when the argument is positive.  These values 
+are not possible encoded pointers.
+
+
+@[:internals:IS_ATOM_DBL|]
+==== IS_ATOM_DBL
+<eucode>
+<internal> int IS_ATOM_DBL( object o )
+</eucode>
+
+===== Returns
+true if the object is an encoded pointer to a double struct.
+
+===== Assumption
+//o// must not be a Euphoria integer.
+
+
+
+
+@[:internals:IS_ATOM|]
+==== IS_ATOM
+<eucode>
+<internal> int IS_ATOM( object o )
+</eucode>
+
+===== Returns
+true if the object is a Euphoria integer or an encoded pointer to a 
+##'struct d'##. 
+
+
+@[:internals:IS_SEQUENCE|]
+==== IS_SEQUENCE
+<eucode>
+<internal> int IS_SEQUENCE( object o )
+</eucode>
+
+===== Returns
+true if the object is an encoded pointer to a ##'struct s1'##.
+
+===== Assumption
+//o// is not NOVALUE.
+
+
+@[:internals:IS_DBL_OR_SEQUENCE|]
+==== IS_DBL_OR_SEQUENCE
+<eucode>
+<internal> int IS_DBL_OR_SEQUENCE( object o )
+</eucode>
+
+===== Returns
+true if the object is an encoded pointer of either kind of structure.
+
+
+=== Type Conversion Functions and Macros
+
+
+@[:internals:MAKE_INT|]
+==== MAKE_INT
+<eucode>
+<internal> object MAKE_INT( signed int x )
+</eucode>
+
+===== Returns
+an object with the same value as x.  x must be with in the integer range of a 
+legal Euphoria integer type.
+
+@[:internals:MAKE_UINT|]
+==== MAKE_UINT
+<eucode>
+<internal> object MAKE_UINT( unsigned int x )
+</eucode>
+
+===== Returns
+an object with the same value as x.  
+
+===== Assumption
+x must be an **unsigned** integer with in the integer range of a C unsigned 
+int type.
+
+===== Example
+MAKE_UINT(4*1000*1000*1000) will make a Euphoria value of four billion by 
+creating a double.
+
+@[:internals:MAKE_SEQ|]
+==== MAKE_SEQ
+<eucode>
+<internal> object MAKE_SEQ( struct s1 * sptr )
+</eucode>
+
+===== Returns
+an object with an argument of a pointer to a ##'struct s1'##
+The pointer is encoded into a range for sequences and returned.
+
+@[:internals:NewString|]
+==== NewString
+<eucode>
+<internal> object NewString(char *s)
+</eucode>
+
+===== Returns
+an object representation of a Euphoria byte string s.  The returned encoded 
+pointer is a sequence with all of the bytes from s copied over.
+
+@[:internals:MAKE_DBL|]
+==== MAKE_DBL
+<eucode>
+<internal> object MAKE_DBL( struct d * dptr )
+</eucode>
+
+===== Returns
+an object with an argument of a pointer to a ##'struct d'##
+The pointer is encoded into a range for doubles and returned.
+
+
+@[:internals:NewDouble|]
+==== NewDouble
+<eucode>
+<internal> object NewDouble( double dbl )
+</eucode>
+
+===== Returns
+an object with an argument a double ##dbl##.  A ##struct d## is allocated and 
+dbl is assigned to the value part of that structure.  The pointer is encoded 
+into the  range for doubles and returned.
+
+
+@[:internals:DBL_PTR|]
+==== DBL_PTR
+<eucode>
+<internal> struct d * DBL_PTR( object o )
+</eucode>
+
+===== Returns
+The pointer to a 'struct d' from the object o.
+
+===== Assumption
+IS_ATOM_INT(o) is FALSE and IS_ATOM_DBL(o) is TRUE.
+
+
+@[:internals:SEQ_PTR|]
+==== SEQ_PTR
+<eucode>
+<internal> struct s1 * SEQ_PTR( object o )
+</eucode>
+
+===== Returns
+The pointer to a ##'struct s1'## from the object o.
+
+===== Assumption
+IS_SEQUENCE(o) is TRUE and //o// is not NOVALUE.
+
+@[:internals:get_pos_int|]
+===== get_pos_int
+<eucode>
+#include be_machine.h
+<internal> uintptr_t get_pos_int(char *where, object x)
+</eucode>
+
+===== Returns
+a unsigned long value by truncating what x's value is to an integer
+
+===== Comment
+Any object may be passed.  A sequence results in a runtime failure.
+There may be a cast of a double to a smaller ranged long type.
+
+
+=== Creating Objects
+
+@[:internals:NewS1|]
+==== NewS1
+<eucode>
+<internal> object NewS1 ( long size )
+</eucode>
+
+===== Returns
+A sequence object with size members which are not yet set to a value.
+
+
+
+=== Object Constants
+
+Use MAXINT and MININT to check for overflow and underflow, NOVALUE to check if a 
+variable has not
+been assigned, and use NOVALUE to terminate a sequence.
+
+@[:internals:NOVALUE|]
+==== NOVALUE
+<eucode>
+<internal> object NOVALUE
+</eucode>
+
+Indicates that a variable has not been assigned and also terminates a sequence.
+
+@[:internals:MININT|]
+==== MININT
+<eucode>
+<internal> signed int MININT
+</eucode>
+
+The minimal Euphoria integer.  This is -(2^^30^^).
+
+
+@[:internals:MAXINT|]
+==== MAXINT
+<eucode>
+<internal> signed int MAXINT
+</eucode>
+
+The maximal Euphoria integer.  This is 2^^30^^-1.
+
+@[:internals:HIGH_BITS|]
+==== HIGH_BITS
+<eucode>
+<internal> signed int HIGH_BITS
+</eucode>
+
+HIGH_BITS is an integer value such that if another integer value c lies outside of the range 
+between MININT and MAXINT, c+HIGH_BITS will be non-negative.
+
+===== Proof that HIGH_BITS is #C000_0000 on 32-bit version of EUPHORIA.
+   *In the following expressions powers have higher precedence than unuary minus.*
+   if c is a non-ATOM-INT value, then
+   
+   c belongs to the set  [-2^^31^^,-2^^30^^-1(=NOVALUE)] U [2^^30^^,2^^31^^].
+   
+   c+-2^^30^^ belongs to the set  [-2^^31^^-2^^30^^,-2^^30^^-1-2^^30^^] U [2^^30^^-2^^30^^,2^^30^^]
+    which is [-3*2^^30^^,-2^^31^^-1] U [0,2^^30^^].  However the lower values wrap around 
+    to non-negative numbers:
+    
+   -2^^31^^-1 wraps to 2^^31^^-1.  -3*2^^30^^ wraps around to 2^^30^^.
+   
+   c+-2^^30^^ belongs to the set  [2^^30^^,2^^31^^-1] U [0,2^^30^^] = [0,2^^31^^-1]
+   
+   This is the set of all non-negative numbers that can fit into 32-bit signed
+   longs.  -2^^30^^ is the unsigned version of #C000_0000.  QED.
+   
+   A visual way of looking at it is, adding #C000_0000 to the set of non-ATOM_INTS 
+   rotates the set to the negative side by -MININT (2^30).  The already negative ones wrap 
+   around to the positive; the positive numbers stay positive and hug the zero.  
+   Since adding #C000_0000 on registers is 1-1 and onto, we also know that ATOM_INTs
+   will all be mapped to negative signed longs.
+   
+   
+===== Testing for Overflow:
+    There are two ways to test for overflow:
+    	# (c > MAXINT) || (c < MININT)
+        # (c + HIGH_BITS) >= 0
+        
+==== Parser
+
+Inserting tokens into the token buffer is the easiest way to add features to the EUPHORIA parser.
+The tokens are two-element sequences one of the class of token and the other the token's value:
+ 
+ {<class>,<value>}
+ 
+Each of the class values are capitalized words for some keyword or VARIABLE.  
+The list of constants is in reswords.e.  Often it is enough to only examin the class.
+In the case of variables, it is important to know which variable.
+In this case the second element, comes into play.
+
+You can use ##putback## to put tokens into the token buffer.  The tokens will be pulled out
+by the parser in a filo manner, like a stack.  
+
+==== Backend Instructions
+
+After the Parser processes the instructions.  It creates Backend instructions that
+are easily translated or interpreted.  The system uses opcodes and some parameters which
+are put on a stack.  This backend language is similar to assembler.  You have
+opcodes (instructions) and parameters.  These parameters must be integers themselves but
+some may serve as pointers to arbitrary EUPHORIA objects.  As a developer of EUPHORIA itself,
+rather than a developer that uses EUPHORIA, it is important to know exactly what these
+opcodes do and what they are for.  In this section we will document what they are for,
+and how they manipulate the instruction pointer, and stack.
+
+
+IF instruction:
+
+The IF instruction is used for making runtime branch statements.  The IF instruction takes
+the top of the stack as the condition value, if the condition is 0, it passes control to
+the address stored just below the top of the stack.  If the condition is non-zero and
+an atom the instruction pointer just past the failure address.
+
+[ IF instruction ] [ test value ] [ failure address ]
+
+
+INTEGER_CHECK instruction:
+
+The INTEGER_CHECK is used to ensure that something has a value considered to be
+'integer' to the EUPHORIA language definition.  The instruction takes the next argument as
+a pointer to a value and determines whether this value is in the legal integer range,
+regardless of how that number is represented.  If not in legal range, then 
+the program ends execution in a type-check failure error message.
+
+[ INTEGER_CHECK instruction ] [ test pointer ]
+
+ATOM_CHECK instruction:
+
+The ATOM_CHECK is used to determine whether something has a numeric value rather than
+a sequence.  The instruction takes an argument as a pointer to a value and
+determines whether the value is an atom.  If it is not an atom, then the program
+ends execution in a type-check failure error message.
+
+[ ATOM_CHECK instruction ] [ test pointer ]
+
+IS_AN_INTEGER instruction:
+
+The IS_AN_INTEGER instruction is used to determine whether something has a value considered to
+be 'integer' to the EUPHORIA language definition.  The instruction takes the argument as 
+a pointer to a value and determines whether this value is in the legal integer range, 
+regardless of how that number is represented.  If it is in the 'integer' range then 
+the value pointed by the second argument will be 1 otherwise it will be 0.
+
+[ IS_AN_INTEGER instruction ] [ test pointer ][ return value pointer ]

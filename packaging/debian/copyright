@@ -1,0 +1,30 @@
+This package was debianized by Matt Lewis <mattlewis@openeuphoria.org> on
+Sat, 29 Dec 2007 21:28:05 -0500.
+
+It was downloaded from <http://sourceforge.net/projects/rapideuphoria>
+
+Author(s): 
+
+    Matt Lewis <matthewwalkerlewis@gmail.com>
+    
+Copyright: 
+  Copyright (c) 2007-2011 by OpenEuphoria Group.
+  Copyright (c) 1993-2006 by Rapid Deployment Software.
+  All Rights Reserved.
+
+  PCRE v8.10
+    Copyright (c) 1997-2010 University of Cambridge
+    All Rights Reserved
+
+License:
+
+    Permission is hereby granted, free of charge, to any person obtaining a copy 
+    of this software and associated documentation files (the "Software"), 
+    to deal in the Software without restriction, including without limitation 
+    the rights to use, copy, modify, merge, publish, distribute, sublicense, 
+    and/or sell copies of the Software, and to permit persons to whom the 
+    Software is furnished to do so.
+
+The Debian packaging is (C) 2007, Matt Lewis <matthlewis@openeuphoria.org> and
+is licensed under the GPL, see `/usr/share/common-licenses/GPL'.
+

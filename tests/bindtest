@@ -1,0 +1,3 @@
+echo Binding...
+../source/exu ../source/eubind.ex bindme.ex
+

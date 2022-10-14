@@ -1,0 +1,349 @@
+%%output=installing_euphoria
+== Installation
+:<<LEVELTOC level=2 depth=4>>
+
+To install Euphoria, consult the instructions below for your particular 
+operating system.
+
+=== Windows
+
+All versions other than Windows 95 work without problems.  To use Windows 95, it must have Internet Explorer version 4 or higher
+installed (included in service pack 2.5).  To use the new socket functions you will also Windows 2000 or later.  To use all of the new standard library functions you will need at least Windows XP or later.
+
+Euphoria is frequently tested on Windows versions: XP, Vista, 7.
+
+To install Euphoria on //Windows//, visit the following URL:
+
+:http://openeuphoria.org/wiki/view/DownloadEuphoria.wc
+
+The "Standard" version is a complete Euphoria installation, with
+Interpreter, Binder, Translator. Included are demo programs and
+documentation.
+
+The "Open Watcom" version has the contents of the "Standard" version, 
+plus a bundled compiler. This is a convenient way of producing compiled executables
+from Euphoria programs.
+
+Download the latest //Windows// installer found under the Binary Releases 
+heading of the Current version of Euphoria. Run the program and follow the 
+prompts to get Euphoria installed.
+   
+The installer copies the required files; adds the binary subdirectory to 
+your path, if you leave 'update environment' checked; and if you leave 
+'Associate file extensions' checked, it associates icons and various actions to
+Euphoria file extensions.  Please do not open 'Euphoria Console Files' from Explorer;
+they are meant to be run from the command line.
+
+The installer does not set the environment variable **EUDIR** to the Euphoria 
+directory even though many third-party programs expect that to be set.  This is
+so an older version of EUPHORIA can also still work on the same system.  To set this variable
+please see the section [[:manually_edit_your_environment| "How to manually edit your environment in Windows"]] below.
+
+==== Possible Problems 
+
+* On Windows XP/2000, be careful that your PATH and EUDIR do not conflict with autoexec.nt, which can also be used to set environment variables.
+* On WinME/98/95 if the install program fails to edit your autoexec.bat file, you will have to do it yourself. Follow the manual procedure  described below.
+* Euphoria cannot be run under Windows 3.1 and some unpatched versions of Windows 95 will not be able to run EUPHORIA 4.0.
+* You have two EUPHORIA installs and you want to change the environment to use another EUPHORIA.
+
+@[:manually_edit_your_environment|]
+==== How to manually modify the environment in Windows
+
+Your EUPHORIA installation directory by default will be C:\Euphoria.  It is possible to install to 
+%PROGRAMFILES%\Euphoria, or anywhere you wish.  Careful when using the %ProgramFiles% special location (C:\Program Files on most systems in English).  The %ProgramFiles% directory invariably contains spaces by default.  It is a good idea to use the short 8.3 version of the name, or surround with double quotes.  Ofcourse, you'll just have to substitute your real installation
+directory for the C:\EUPHORIA examples below.
+
+===== How to manually modify the environment in Windows (Windows NT/2000/XP)
+ 
+ On Windows XP select: Start Menu -> Control Panel -> Performance
+ &Maintenance -> System -> Advanced then click the "Environment Variables"
+ button. Click the top "New..." button then enter EUDIR as the Variable Name
+ and c:\euphoria (or whatever is correct) for the value, then click OK. Find
+ PATH in the list of your variables, select it, then click "Edit...". Add
+ {{{;c:\euphoria\bin}}} at the end and click OK.
+
+ On Windows Vista, You'll find the environment variables available at
+ Start Menu -> Control Panel -> "System and Maintenance" -> "System" 
+ -> "Advanced system settings" -> "Environment Variables" (button)
+ 
+ Other versions of Windows will have the environment variables somewhere in the control panel.
+
+===== How to manually modify the environment in Windows (ME/98/95/3.1) 
+
+ #    In the file c:\autoexec.bat add C:\EUPHORIA\BIN to the list of
+       directories in your PATH command. You might use the MS-DOS Edit command,
+       Windows Notepad or any other text editor to do this.\\
+\\
+       You can also go to the Start Menu, select Run, type in sysedit and press
+       Enter. autoexec.bat should appear as one of the system files that you
+       can edit and save.     
+ #  In the same autoexec.bat file add a new line:\\
+         SET EUDIR=C:\EUPHORIA \\
+       The EUDIR environment variable indicates the full path to the main
+       Euphoria directory.
+ #  Reboot (restart) your machine. This will define your new PATH and EUDIR
+       environment variables.
+\\
+\\
+ Some systems, such as Windows ME, have an autoexec.bat file, but it's a hidden
+ file that might not show up in a directory listing. Nevertheless it's there,
+ and you can view it and edit it if necessary by typing, for example: notepad
+ c:\autoexec.bat in a DOS window.
+
+
+=====  More on editing environment variables
+
+
+* set EUDIR to the location of your Euphoria installation directory.
+* In PATH you need to include %EUDIR%\BIN.
+* There is another, optional, environment variable used by some experienced
+ users of Euphoria. It is called EUINC (see the [[:include statement]] ). It determines a search path for
+ included files and this variable is used by new and older versions of EUPHORIA. However, for 4.0 and above we now have a [[:set_up_the_euphoria_configuration_file|"configuration file"]] for adding include paths and other settings.
+
+@[:modifying_the_registry|]
+==== Modifying the Registry
+ 
+Updating the environment is not enough, your old installation will still be called when you open a Euphoria program in explorer or invoke the Euphoria program on the command line without typing in the interpreter (eui euiw).  Do not type in the single quotes.
+
+You can set these in regedit (replace C:\EUPHORIA with your Euphoria installation directory):
+{{{
+HKEY_CLASSES_ROOT\.exw\(Default) 
+    => 'EUWinApp'
+HKEY_CLASSES_ROOT\EuWinApp\(Default) 
+    => 'Euphoria Windows App'
+HKEY_CLASSES_ROOT\EUWinApp\shell\open\command\(Default) 
+    => 'C:\EUPHORIA\BIN\euiw.exe "%1"'
+HKEY_CLASSES_ROOT\EUWinApp\shell\translate\command\(Default) 
+    => 'C:\EUPHORIA\BIN\euc.exe "%1"'
+
+HKEY_CLASSES_ROOT\.ex\(Default) 
+   => 'EUConsoleApp'
+HKEY_CLASSES_ROOT\EUConsoleApp\(Default) 
+   => 'Euphoria Console App'
+HKEY_CLASSES_ROOT\EUConsoleApp\shell\open\command\(Default) 
+   => 'C:\EUPHORIA\BIN\eui.exe "%1"'
+HKEY_CLASSES_ROOT\EUConsoleApp\shell\translate\command\(Default) 
+   => 'C:\EUPHORIA\BIN\euc.exe -con "%1"'
+
+HKEY_CLASSES_ROOT\.e\(Default) => 'EUInc'
+HKEY_CLASSES_ROOT\EUInc\(Default) => 'Euphoria Include File'
+HKEY_CLASSES_ROOT\.ew\(Default) => 'EUInc'
+}}}
+
+You can also set an editor for your EUPHORIA programs this way:
+{{{
+HKEY_CLASSES_ROOT\EUWinApp\shell\edit\command"\(Default) 
+   => 'C:\EUPHORIA\BIN\euiw.exe C:\EUPHORIA\BIN\edx.ex "%1"'
+HKEY_CLASSES_ROOT\EUConsoleApp\shell\edit\command"\(Default) 
+   => 'C:\EUPHORIA\BIN\euiw.exe C:\EUPHORIA\BIN\edx.ex "%1"'
+HKEY_CLASSES_ROOT\EUInc\shell\edit\command"\(Default) 
+   => 'C:\EUPHORIA\BIN\euiw.exe C:\EUPHORIA\BIN\edx.ex "%1"'
+}}}
+
+You can setup to allow the supplied editor program open to the line where the last failure occured in ex.err files:
+{{{
+HKEY_CLASSES_ROOT\.err\(Default) => 'EUError'
+HKEY_CLASSES_ROOT\EUError\(Default) => 'Error File'
+HKEY_CLASSES_ROOT\EUError\shell\debug 
+    => 'Debug what created this error file'
+HKEY_CLASSES_ROOT\EUError\shell\debug\command\(Default) 
+    => 'C:\EUPHORIA\BIN\eui.exe C:\EUPHORIA\BIN\edx.ex'
+HKEY_CLASSES_ROOT\EUError\DefaultIcon\(Default) 
+    => 'C:\Windows\system32\shell32.dll,78'
+}}}
+
+
+
+=== UNIX like OSes
+
+The Packaging scripts are maintained in the source code repository for these three Linux distributions: Arch, Debian, and Slackware.  The distribution specific packages installs Euphoria in locations according to the filesystem location conventions of that particular distribution.  If your OS is not Linux or is not a Linux of one of these distributions, read on.
+
+Euphoria may be installed using either a tarball source and binary archive ( ##.tar.gz## or ##.tar.bz2## )
+
+:http://openeuphoria.org/wiki/view/DownloadEuphoria.wc
+The distribution specific packages installs Euphoria in locations according to the filesystem location conventions of that particular distribution.
+To install this version, you must manually unarchive the tarball.  Then you can move the various files to locations in your filesystem. 
+You might need to:
+* create an ##eu.cfg## file or 
+* set up ##EUINC##.  See the [[:include statement]].
+
+
+
+
+=== DOS
+
+There is DOS support only up to Euphoria 3.1. DOS developers are 
+invited to contribute their skills.
+
+== Post Install
+
+The directory maps will help you locate the Euphoria executables, documentation,
+and sample programs.
+
+The Windows package installs Euphoria into these directories:
+
+{{{
+|
+|__ euphoria
+     |     file_id.diz
+     |     License.txt
+     |
+     |__ bin           (executables: interpreter, binder, translator, utilities, libraries, ...)
+     |
+     |__ include 
+     |   |             (original include files)
+     |   |
+     |   |__ std       (standard Euphoria library: io.e, sequence.e, ...)
+     |   |
+     |   |__ euphoria  (Euphoria specific)
+     |
+     |
+     |__ docs          (html and pdf documentation files)
+     |
+     |__ tutorial      (small tutorial programs to help you learn Euphoria)
+     |
+     |__ demo          (generic demo programs that run on all platforms)
+     |   |
+     |   |__ win32     (Windows specific demo programs (optional) )
+     |   |__ unix      (Linux/FreeBSD/OS X specific demo programs (optional))
+     |   |__ langwar   (language war game for Linux/FreeBSD/OS X )
+     |   |__ bench     (benchmark program )
+     |
+     |__ source        (the complete source code for: interpreter, translator)
+     |
+     |__ tests         (unit tests for Euphoria)
+     |
+     |__ packaging     (software for making installation packages)
+}}}
+
+
+For non Microsoft OSes there are Debian, ArchLinux, Slackware and OSX packages.
+
+The Debian package installs Euphoria into these directories:
+
+{{{
+|
+|__ usr
+|    |__ bin                      (executables: eui, euc, ... )
+|    |__ lib                      (executables: interpreter, binder, translator, utilities, libraries, ...)
+|    |__ share                    
+|         |__ euphoria            
+|         |    |                  
+|         |    |__ bin            (utility programs)
+|         |    |                  
+|         |    |__ demo           (general demonstration programs)
+|         |    |     |__ win32    (empty)
+|         |    |     |__ unix     (Linux/FreeBSD/OS X specific demo programs)
+|         |    |     |__ langwar  (language war game for Linux/FreeBSD/OS X )
+|         |    |     |__ bench    (benchmark program )
+|         |    |__ include        
+|         |    |    |             (original include files)
+|         |    |    |__ std       (standard Euphoria library: io.e, sequence.e, ...)
+|         |    |    |__ euphoria  (Euphoria specific)
+|         |    |__ source         (source-code for Euphoria)
+|         |    |                  
+|         |    |__ tutorial       (tutorial programs for learning Euphoria)
+|         |                      
+|         |                       
+|         |__ doc/euphoria        (html and pdf documentation (optional))
+|                               
+|                                 
+|__ etc/euphoria                  ( eu.cfg )
+}}}
+
+The "include", "demo" and "tutorial" directories are the same in
+//Windows// and //Unix//.  The //unix// demos are included with Windows but the ##win32## demos are not included in //Linux// distributions. 
+{{{
+}}}
+Additionally, the tar-balls available online have a Windows like layout.  But you can use GNU make to install things to same directories that the Debian package does.
+
+By default using ##/usr/local/## instead of ##/usr/##.
+You can change ##/usr/local## to something else by running the following command before building:
+{{{
+$ ./configure --prefix /some/other/location
+}}}
+
+To install
+{{{
+$ su
+# make install
+}}}
+
+
+
+
+%%output=configuration
+@[:set_up_the_euphoria_configuration_file|]
+== Set Up the Euphoria Configuration File (eu.cfg)
+
+Euphoria supports reading command line switches from configuration files. The 
+default name for the configuration file is ##eu.cfg##. However you can specify
+different ones by using the ##-C## switch.
+
+=== Configuration file format
+
+The configuration file is a text file. Each line in the file is either a command
+line switch, a section header, an include path or a comment.
+* Comments are lines that begin with a double dash {{{"--"}}}. Everything on the
+line is ignored.
+* A section header is a //name// enclosed in square brackets. eg. 
+##[interpret]##.
+** There are a number of predefined sections.
+** The lines in a section are only added to the command line switches if they
+ apply to the mode that Euphoria is running in.
+*** [windows] Applies to Windows platform only.
+*** [unix] Applies to any Unix platform only.
+*** [interpret] Applies to the interpreter running in any platform.
+*** [translate] Applies to the translator running in any platform.
+*** [bind] Applies to the binder running in any platform.
+*** [interpret:windows] Applies to the interpreter when running under //Windows// 
+only.
+*** [interpret:unix] Applies to the interpreter when running under //Unix// 
+only.
+*** [translate:windows] Applies to the translator when running under //Windows// 
+only.
+*** [translate:unix] Applies to the translator when running under //Unix// only.
+*** [bind:windows] Applies to the binder when running under //Windows// only.
+*** [bind:unix] Applies to the binder when running under //Unix// only.
+*** [all] Applies to all running modes.
+** All configuration lines before the first section header are assumed to be the
+##[all]## section.
+** You can have any number of section headers, but only the predefined ones are
+used. All lines in other sections are treated as comments.
+* A command line switch is a line that begins with a single dash. The entire 
+line is added to the actual command line as if it was originally there.
+* An include path is any other line that is not one of the above. The string 
+##-I## is prepended to the line and then it is added to the command line.
+
+=== Config File Locations
+
+When Euphoria starts up, it looks for configuration files in the following 
+order:
+* For //Windows// systems
+## ~%ALLUSERSPROFILE~%\euphoria\eu.cfg
+## ~%APPDATA~%\euphoria\eu.cfg
+## ~%EUDIR~%\eu.cfg
+## ~%HOMEDRIVE~%\~%HOMEPATH~%\eu.cfg
+## From where ever the executable is run from "<exepath>/eu.cfg"
+## Current working directory - "./eu.cfg"
+## Command line -C switches
+* For //Unix// systems
+## /etc/euphoria/eu.cfg
+## ${EUDIR}/eu.cfg
+## ${HOME}/.eu.cfg
+## From where ever the executable is run from "<exepath>/eu.cfg"
+## Current working directory - "./eu.cfg"
+## Command line -C switches
+
+=== Config File Notes
+
+* Euphoria processes every configuration file found, and in the order described 
+above. This means that settings specified in earlier configuration files may be 
+overridden by subsequent configuration files. For example, a configuration file 
+in the current directory will override the same settings in a configuration file
+in the executable's directory.
+* If a configuration file contains a ##-C## switch, the new configuration file
+specified on that switch is processed before subsequent lines in the old file.
+* A configuration file is only ever processed once. Additional references to the
+same file are ignored.
+

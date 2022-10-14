@@ -1,0 +1,21 @@
+Source: euphoria
+Section: interpreters
+Priority: extra
+Maintainer: Matt Lewis <mattlewis@users.sf.net>
+Build-Depends: libc6-dev (>= 2.6.1 ), linux-libc-dev (>= 2.6.22-14.47 )
+Standards-Version: 3.8.4
+
+Package: euphoria
+Architecture: %arch%
+Depends: libc6 (>= 2.3.6-6~)
+Description: Intrepreted and compiled programming language
+ Euphoria is a simple, flexible, and easy-to-learn programming 
+ language. It lets you quickly and easily develop programs for 
+ Windows, Linux, OSX and FreeBSD. Euphoria was first released 
+ in 1993. Since then Rapid Deployment Software has been steadily 
+ improving it with the help of a growing number of enthusiastic users. 
+ Although Euphoria provides subscript checking, uninitialized variable 
+ checking and numerous other run-time checks, it is extremely fast. 
+ People use it to develop Windows GUI programs and Linux/FreeBSD 
+ X Windows programs. It is also very useful for CGI 
+ (Web-based) programming.

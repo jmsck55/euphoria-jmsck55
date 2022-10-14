@@ -1,0 +1,262 @@
+== Euphoria Trouble-Shooting Guide
+:<<LEVELTOC level=2 depth=4>>
+
+If you get stuck, here are some things you can do:
+
+# Type: ##guru## followed by some keywords associated with your problem. For 
+example, ##guru declare global include##
+# Check the list of common problems ([[:Common Problems and Solutions]]).
+# Read the relevant parts of the documentation, i.e. 
+[[:toc|Euphoria Programming Language v4.0]] or [[:API Reference]].
+# Try running your program with trace:
+<eucode>
+with trace
+trace(1)
+</eucode>
+# The [[http://openeuphoria.org/forum/index.wc|Euphoria Forum]] has a 
+search facility. You can search the archive of all previous messages. There is a
+good chance that your question has already been discussed.
+# Post a message on the forum.
+# Visit the Euphoria IRC channel, [[irc://irc.freenode.net/#euphoria]].
+
+=== Common Problems and Solutions
+
+Here are some commonly reported problems and their solutions.
+
+==== Console window disappeared
+
+//I ran my program with ##euiw.exe## and the console window disappeared
+before I could read the output.//
+
+The console window will only appear if required, and will disappear immediately 
+when your program finishes execution. Perhaps you should code something like:
+
+<eucode>
+puts(1, "\nPress Enter\n")
+if getc(0) then
+end if
+</eucode>
+at the end of your program.
+
+You may also run your console program with ##eui.exe##.
+
+==== Press Enter
+
+//At the end of execution of my program, I see "Press Enter" and I have to hit 
+the Enter key. How do I get rid of that?//
+
+Call [[:free_console]] just before your program terminates.
+
+<eucode>
+include dll.e
+
+free_console()
+</eucode>
+
+==== CGI Program Hangs / No Output
+
+//My Euphoria CGI program hangs or has no output//
+
+# Make sure that you are using the ##-batch## parameter to ##eui##. This causes 
+Euphoria to not present the normal "Press any key to continue..." prompt when a 
+warning or error occurs. The web server will not respond to this prompt and your
+application will hang waiting for ENTER to be pressed.
+# Use the ##-wf## parameter to write all warnings to a file instead of the 
+console. The warnings that Euphoria will write to the console may interfere with 
+the actual output of your web content.
+# Look for an ex.err file in your cgi-bin directory. Turn on 
+##with trace## / ##trace(3)## to see  what statements are executed (see 
+##ctrace.out## in your cgi-bin). On //Windows// you should always use ##eui.exe##
+to run CGI programs, or you may have problems with standard output. With
+Apache Web Server, you can have a first line in your program of:
+#!.\eui.exe to run your program using eui.exe in the current (cgi-bin)
+directory. Be careful that your first line ends with the line breaking characters
+appropriate for your platform, or the ##!## won't be handled correctly. You 
+must also set the execute permissions on your program correctly, and ##ex.err## 
+and ctrace.out must be writable by the server process or they won't be updated.
+
+
+==== Read / Write Ports?
+
+//How do I read/write ports?//
+
+There are collections of machine-level routines from the
+[[http://www.rapideuphoria.com|Euphoria Web Page]].
+
+==== Program has no errors, no output
+
+//When I run my program there are no errors but nothing happens.//
+
+You probably forgot to call your main procedure. You need
+a top-level statement that comes after your main procedure to call the
+main procedure and start execution.
+
+==== Routine not declared
+
+//I'm trying to call a routine documented in ##library.doc##, but it keeps
+saying the routine has not been declared.//
+
+Did you remember to include the necessary ##.e## file from the 
+##euphoria\include## directory? If the syntax of the routine says for example,
+"##include\std\graphics.e##", then your program must have 
+"##include\std\graphics.e##" (without the quotes) before the place where you 
+first call the routine.
+
+==== Routine not declared, my file
+
+//I have an include file with a routine in it that I want to call, but when I
+try to call the routine it says the routine has not been declared. But it 
+**has** been declared.//
+
+Did you remember to define the routine as ##public##, ##export## or possibly 
+##global##? If not, the routine is not visible outside of its own file.
+
+==== After user input, left margin problem
+
+//After inputting a string from the user with ##gets##, the next line that 
+comes out on the screen does not start at the left margin.//
+
+Your program should output a //new-line// character e.g.
+
+<eucode>
+input = gets()
+puts(SCREEN, '\n')
+</eucode>
+
+==== Floating-point calculations not exact
+
+//Why aren't my floating-point calculations coming out exact?//
+
+Intel CPU's, and most other CPU's, use binary numbers to represent
+fractions. Decimal fractions such as 0.1, 0.01 and
+similar numbers can't be represented precisely. For example, 0.1 might
+be stored internally as ##0.0999999999999999## . That means that ##10 * 0.1##
+might come out as ##0.999999999999999##, and ##floor(10 * 0.1)## might be ##0##,
+not ##1## as you would expect. This can be a nuisance when you are dealing
+with money calculations, but it is not a Euphoria problem. It's a
+general problem that you must face in most programming languages.
+Always remember: floating-point numbers are just an approximation
+to the "real" numbers in mathematics. Assume that any floating-point calculation
+might have a tiny bit of error in the result. Sometimes you can
+solve the problem by rounding, e.g. x = round( x, 100 ) would round
+x off to the nearest hundredth.  Storing money values as an integer
+number of pennies, rather than a fractional number of dollars
+(or similar currency) will help, but some calculations could still
+cause problems.
+
+
+
+==== Number to a string?
+
+//How do I convert a number to a string?//
+
+Use [[:sprintf]]:
+
+<eucode>
+string = eu:sprintf("%d", 10) -- string is "10"
+</eucode>
+
+or use [[:number]]:
+
+<eucode>
+include std/locale.e as locale
+string = locale:number(10) 
+         -- string is probably "10.00" if called in the U.S.
+         -- It depends on the locale preferences set on your computer.
+</eucode>
+
+Number formats according to the locale setting on your computer and
+strangely, this means to give you two decimal places whether or not
+you supply an integer value for the U.S. locale.
+
+Besides ##%d##, you can also try other formats, such as
+##%x## (Hex) or ##%f## (floating-point).
+
+==== String to a number?
+
+//How do I convert a string to a number?//
+
+Use [[:value]].
+
+==== Redefine my for-loop variable?
+
+//It says I'm attempting to redefine my for-loop variable.//
+
+For-loop variables are declared automatically. Apparently you already have a
+declaration with the same name earlier in your routine or your program.
+Remove that earlier declaration or change the name of your loop variable.
+
+==== Unknown Escape Character
+
+//I get the message "unknown escape character" on a line where I am trying
+to specify a file name.//
+
+**Do not** say ##"C:\TMP\MYFILE"##. You need to say ##"C:~\~\TMP~\~\MYFILE"## 
+or use back-quotes ##`C:~\TMP~\MYFILE`##.
+
+Backslash is used for escape characters such as ##\n## or ##\t##. To specify a 
+single backslash in a string you need to type ##~\~\##. Therefore, say 
+##"C:~\~\TMP~\~\MYFILE"## instead of ##"C:\TMP\MYFILE"##
+
+==== Only first character in printf
+
+//I'm trying to print a string using [[:printf]] but only the first character
+comes out.//
+
+You need to put braces around the parameters sequence to [[:printf]]. You
+probably wrote:
+
+<eucode>
+printf(1, "Hello, %s!\n", mystring)
+</eucode>
+
+but you need:
+
+<eucode>
+printf(1, "Hello, %s!\n", {mystring})
+</eucode>
+
+==== Only 10 significant digits during printing
+
+//When I print numbers using [[:printf]] or [[:? ->q_print]] only 10 significant
+digits are displayed.//
+
+Euphoria normally only shows about 10 digits. Internally, all
+calculations are performed using at least 15 significant digits. To see
+more digits you have to use [[:printf]]. For example,
+
+<eucode>
+printf(1, "%.15f", 1/3)
+</eucode>
+
+This will display 15 digits.
+
+==== A type is expected here
+
+//It complains about my routine declaration, saying, "a type is expected
+here."//
+
+When declaring subroutine parameters, Euphoria requires you to
+provide an explicit type for each individual parameter. e.g.
+
+<eucode>
+procedure foo(integer x, y)         -- WRONG
+procedure foo(integer x, integer y) -- RIGHT
+</eucode>
+
+In all other contexts it is ok to make a list:
+
+<eucode>
+atom a, b, c, d, e
+</eucode>
+
+==== Expected to see...
+
+//It says: ##Syntax Error - expected to see possibly 'xxx', not 'yyy'##//
+
+At this point in your program you have typed a variable, keyword, number or
+punctuation symbol, yyy, that does not fit syntactically with what has come
+before it. The compiler is offering you one example, xxx, of something that
+would be accepted at this point in place of yyy. Note that there may be many
+other legal (and much better) possibilities at this point than xxx, but xxx
+might at least give you a clue as to what the compiler is "thinking."
