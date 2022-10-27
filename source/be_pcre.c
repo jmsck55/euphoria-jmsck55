@@ -33,7 +33,7 @@ void pcre_deref(object re) {
 		rcp = (pcre_cleanup_ptr)(DBL_PTR(re)->cleanup);
 		if (rcp != 0) {
 			if ( (errmsg = rcp->errmsg) ) {
-				DeRefDS(errmsg);
+				DeRefDS(errmsg) 
 				rcp->errmsg = 0;
 			}
 		}

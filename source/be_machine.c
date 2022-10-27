@@ -2256,7 +2256,7 @@ object DefineC(object x)
 		if (IS_ATOM(routine_name))
 			RTFatal("routine name must be a sequence");
 		routine_ptr = SEQ_PTR(routine_name);
-		Ref(routine_name);
+		Ref(routine_name) 
 		if (routine_ptr->length >= TEMP_SIZE)
 			RTFatal("routine name is too long");
 		routine_string = TempBuff;
