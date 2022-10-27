@@ -40,14 +40,14 @@
  */
  
 #include <stdint.h>
-#if defined(EWINDOWS) && INTPTR_MAX == INT64_MAX
+#if defined(_WIN32) && INTPTR_MAX == INT64_MAX
 // MSVCRT doesn't handle long double output correctly
 #define __USE_MINGW_ANSI_STDIO 1
 #endif
 #include <stdio.h>
 #include <inttypes.h>
 
-#ifdef EWINDOWS
+#ifdef _WIN32
 #include <windows.h>
 #endif
 #include "alldefs.h"
@@ -571,7 +571,7 @@ generate_routine(int64_t_cdecl_func, int64_t, __cdecl, cdllfunc, 0LL)
 #else
 // 64-bit Call-C
 
-#ifdef EWINDOWS
+#ifdef _WIN32
 
 // icall typedefs
 typedef int64_t (*icall_sig1) ( double, intptr_t, intptr_t, intptr_t, intptr_t, intptr_t, intptr_t, intptr_t, intptr_t, intptr_t, intptr_t, intptr_t, intptr_t, intptr_t, intptr_t, intptr_t, intptr_t );
@@ -1026,7 +1026,7 @@ float fcall_x86_64( intptr_t func, double* xmm, intptr_t *r ){
 			r[10], r[11], r[12], r[13], 
 			r[14], r[15], r[16]);
 }
-#endif // EWINDOWS / !EWINDOWS
+#endif // _WIN32 / !_WIN32
 union xmm_param {
 	double d;
 	float f;
@@ -1035,7 +1035,7 @@ union xmm_param {
 
 #if INTPTR_MAX == INT64_MAX
 
-#	ifdef EWINDOWS
+#	ifdef _WIN32
 
 		/* The Windows x86-64 calling convention only uses a maximum of
 		 * four registers for passing parameters, regardless of the type.
@@ -1204,7 +1204,7 @@ object call_c(int func, object proc_ad, object arg_list)
 
 	
 #if INTPTR_MAX == INT64_MAX || __ARM_PCS_VFP == 1
-#ifdef EWINDOWS
+#ifdef _WIN32
 	int signature = 0;
 #else
 	intptr_t xmm_i = 0;
@@ -1266,7 +1266,12 @@ object call_c(int func, object proc_ad, object arg_list)
 			MakeCString(NameBuff, MAKE_SEQ(c_routine[proc_index].name), c_routine[proc_index].name->length );
 		else
 			NameBuff[0] = '\0';
-		snprintf(TempBuff, TEMP_SIZE, "C routine %s() needs %d argument%s, not %d",
+		snprintf(TempBuff, TEMP_SIZE, 
+#if INTPTR_MAX == INT64_MAX
+    "C routine %s() needs %ld argument%s, not %ld",
+#else
+    "C routine %s() needs %d argument%s, not %d",
+#endif
 						  NameBuff,
 						  arg_size_ptr->length,
 						  (arg_size_ptr->length == 1) ? "" : "s",
@@ -1348,12 +1353,10 @@ object call_c(int func, object proc_ad, object arg_list)
 				arg = next_arg;
 				PUSH_INT_ARG
 			}
-			else if (IS_ATOM(next_arg) && DBL_PTR(next_arg)->dbl > 0.0
-					&& DBL_PTR(next_arg)->dbl <= (eudouble)UINT64_MAX) {
-				// atoms are rounded to integers
-				// Do we really need both casts? Maybe do a sign check.
-				// We can usually assume that pointers > 0 but is that a
-				// valid assumption? Do we need to check bounds? JAG
+			else if (IS_ATOM(next_arg) 
+				&& DBL_PTR(next_arg)->dbl >= MIN_BITWISE_DBL
+				&& DBL_PTR(next_arg)->dbl <= MAX_BITWISE_DBL ){
+				// allow signed -> unsigned cast, but makes sure we don't overflow
 				arg = (uint64_t)(uintptr_t)DBL_PTR(next_arg)->dbl; //correct
 				// if it's a -ve f.p. number, Watcom converts it to long and
 				// then to unsigned long. This is exactly what we want.
@@ -1363,7 +1366,7 @@ object call_c(int func, object proc_ad, object arg_list)
 				RTFatal("argument out of range.");
 			}
 		}
-		else if( size == C_LONGLONG ){
+		else if( size == C_LONGLONG || size == C_ULONGLONG ){
 			if (IS_ATOM_INT(next_arg)) {
 				PUSH_INT64_ARG(next_arg);
 			}
@@ -1480,9 +1483,9 @@ object call_c(int func, object proc_ad, object arg_list)
 		/* I think you can safely change this such that there are no more conditions.  *
 		 * You'll need to rename those 64bit functions. */
 		#define call_routine(type) \
-				if( is_double ) double_result = dcall_x86_64( long_proc_address, (double*)dbl_op, arg_op SIGNATURE_PARAM);\
-				if( is_float  ) float_result = fcall_x86_64( long_proc_address, (double*)dbl_op, arg_op SIGNATURE_PARAM);\
-				else            int_result = icall_x86_64( long_proc_address, (double*)dbl_op, arg_op, int_args SIGNATURE_PARAM )
+			if ( is_double )    double_result = dcall_x86_64( long_proc_address, (double*)dbl_op, arg_op SIGNATURE_PARAM);\
+			else if( is_float ) float_result = fcall_x86_64( long_proc_address, (double*)dbl_op, arg_op SIGNATURE_PARAM);\
+			else                int_result = icall_x86_64( long_proc_address, (double*)dbl_op, arg_op, int_args SIGNATURE_PARAM )
 	#endif
 	if (return_type == C_DOUBLE) {
 		call_routine(double);
@@ -1504,6 +1507,24 @@ object call_c(int func, object proc_ad, object arg_list)
 		}
 		else{
 			return NewDouble( (eudouble) int64_t_result );
+		}
+	}
+	else if (return_type == C_ULONGLONG ){
+		
+		#if UINTPTR_MAX == UINT32_MAX
+			unsigned long long int uint64_t_result;
+		#else
+			#define uint64_t_result int_result
+		#endif
+		#if __ARM_PCS_VFP == 1
+			uint64_t_result = icall_x86_64( long_proc_address, (double*)dbl_op, arg_op, int_args SIGNATURE_PARAM );
+		#endif
+		call_routine(uint64_t);
+		if( uint64_t_result <= (unsigned long long int)MAXINT ){
+			return (intptr_t) uint64_t_result;
+		}
+		else{
+			return NewDouble( (eudouble)(uint64_t) uint64_t_result );
 		}
 	}
 	else if (return_type == C_FLOAT) {

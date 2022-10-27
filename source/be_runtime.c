@@ -9,10 +9,11 @@
 /******************/
 /* Included files */
 /******************/
+#define _SVID_SOURCE             /* See feature_test_macros(7) */
 #define _LARGE_FILE_API
 #define _LARGEFILE64_SOURCE
 #include <stdint.h>
-#if defined(EWINDOWS) && INTPTR_MAX == INT64_MAX
+#if defined(_WIN32) && INTPTR_MAX == INT64_MAX
 // MSVCRT doesn't handle long double output correctly
 #define __USE_MINGW_ANSI_STDIO 1
 #endif
@@ -41,13 +42,13 @@
 #  if !defined(EMINGW)
 #    include <graph.h>
 #  endif
-#  include <dos.h>
+#  include <direct.h>
 #  include <process.h>
 #  include <conio.h>
 #endif
 
 #include <string.h>
-#ifdef EWINDOWS
+#ifdef _WIN32
 	/* Ensure we set this to 0x400 whether or not it is set. */
 	#include <windows.h>
 	#ifndef _WIN32_IE
@@ -89,13 +90,13 @@
 #define CONTROL_Z 26
 #define CR 13
 #define LF 10
-#ifdef WINDOWS
+#ifdef _WIN32
 #define BS 8
 #else
 #define BS 127
 #endif
 
-#ifdef EWINDOWS
+#ifdef _WIN32
 static int winkbhit();
 #endif
 /**********************/
@@ -460,7 +461,7 @@ void MainScreen()
 
 #endif
 
-#if !defined(EBSD62)
+#if defined(DOMAIN) && defined(SING) && defined(OVERFLOW) && defined(UNDERFLOW) && defined(TLOSS) && defined(PLOSS)
 #undef matherr // avoid OpenWATCOM problem
 #if (defined(__WATCOMC__) || defined(EUNIX)) && !defined(EOW)
 int matherr(struct exception *err)   // 10.6 wants this
@@ -498,7 +499,7 @@ int matherr(struct _exception *err)  // OW wants this
 	RTFatal("math function %s error", msg);
 	return 0;
 }
-#endif
+#endif // defined(matherr)
 
 int crash_call_back = FALSE;
 
@@ -839,7 +840,7 @@ s1_ptr Add_internal_space(object a,int at,int len)
 		}
 		i++;
 	}
-	DeRefDS( MAKE_SEQ( seq ) ) 
+	DeRefDS( MAKE_SEQ( seq ) )
 	return new_seq;
 }
 
@@ -921,7 +922,7 @@ void Head(s1_ptr s1, int reqlen, object_ptr target)
 
 		// First, dereference all existing elements after the new end position.
 		for (op = (s1->base+reqlen), se = s1->base + s1->length + 1; op < se; op++)
-			DeRef(*op) 
+			DeRef(*op)
 
 		// Mark the 'end-of-sequence'
 		*(s1->base+reqlen) = NOVALUE;
@@ -940,7 +941,7 @@ void Head(s1_ptr s1, int reqlen, object_ptr target)
 		for (i = 1; i < reqlen; i++) {
 			temp = *(s1->base+i);
 			*(s2->base+i) = temp;
-		  	Ref(temp) 
+		  	Ref(temp)
 		}
 
 		*(s2->base+reqlen) = NOVALUE;
@@ -961,7 +962,7 @@ void Tail(s1_ptr s1, int start, object_ptr target)
 
 		// First, dereference all existing elements before the new start position.
 		for (ss = op = (s1->base + 1), se = s1->base + start; op < se; op++)
-			DeRef(*op) 
+			DeRef(*op)
 		// Now copy the 'tail' elements to the start of the existing sequence.
 		memmove((void *)ss,(void *)se, sizeof(object_ptr)*(newlen + 1));
 		s1->postfill += start-1;
@@ -976,7 +977,7 @@ void Tail(s1_ptr s1, int start, object_ptr target)
 			*(++trg) = temp;
      		if (temp == NOVALUE)
        			break;
-			Ref(temp) 
+			Ref(temp)
 	 	}
 	 	ASSIGN_SEQ(target, s2);
     }
@@ -1006,7 +1007,7 @@ object Remove_elements(int start, int stop, int in_place )
 		object_ptr q = s1->base + stop + 1;
 
 		for (i=start;i<=stop;i++)
-			DeRef( s1->base[i] ) 
+			DeRef( s1->base[i] )
 
 		for( ; i <= s1->length+1; i++ ){
 			*(p++) = *(q++);
@@ -1023,7 +1024,7 @@ object Remove_elements(int start, int stop, int in_place )
 		for ( i = 1; i < start; i++) {
 			temp = *(++src);
 			*(++trg) = temp;
-			Ref(temp) 
+			Ref(temp)
 		}
         src = s1->base+stop;
 		while (TRUE) {
@@ -1044,7 +1045,7 @@ void AssignElement(object what, int place, object_ptr target)
 {
 	s1_ptr s1 = *assign_slice_seq;
 	if (UNIQUE(s1) && *target == (object)(*assign_slice_seq))
-		{DeRef(*(s1->base+place)) }
+		{DeRef(*(s1->base+place))}
 	else {
 		s1_ptr s2 = NewS1(s1->length);
 		int i;
@@ -1085,9 +1086,9 @@ void Concat(object_ptr target, object a_obj, object b_obj)
 		c = NewS1(2);
 		/* both are atoms */
 		*(c->base+1) = a_obj;
-		Ref(a_obj) 
+		Ref(a_obj)
 		*(c->base+2) = b_obj;
-		Ref(b_obj) 
+		Ref(b_obj)
 	}
 	else {
 		/* both are sequences */
@@ -1112,11 +1113,11 @@ void Concat(object_ptr target, object a_obj, object b_obj)
 				while (--insert >= 0) {
 					temp = *q++;
 					*p++ = temp;
-					Ref(temp) 
+					Ref(temp)
 				}
 				*p = NOVALUE; // end marker
 				if (nb > 0) {
-					Ref(*q) 
+					Ref(*q)
 					Append(target, a_obj, *q);
 					a_obj = *target;
 					a = SEQ_PTR(a_obj);
@@ -1186,7 +1187,7 @@ void Concat_N(object_ptr target, object_ptr  source, int n)
 		s_obj = *(--source);
 		if (IS_ATOM(s_obj)) {
 			*p++ = s_obj;
-			Ref(s_obj) 
+			Ref(s_obj)
 		}
 		else {
 			/* sequence */
@@ -1239,7 +1240,7 @@ void Concat_Ni(object_ptr target, object_ptr *source, int n)
 		s_obj = **(--source);
 		if (IS_ATOM(s_obj)) {
 			*p++ = s_obj;
-			Ref(s_obj) 
+			Ref(s_obj)
 		}
 		else {
 			/* sequence */
@@ -1341,7 +1342,7 @@ void udt_clean_rt( object o, int rid ){
 	else{
 		RefDS( o );
 	}
-#ifdef EWINDOWS
+#ifdef _WIN32
 	if( rt00[rid].convention ){
 		// stdcall
 		(*(int (__stdcall *)())rt00[rid].addr)( o );
@@ -1413,7 +1414,7 @@ void udt_clean( object o, uintptr_t rid ){
 		SEQ_PTR(o)->ref -= 2;
 	}
 	else{
-		DeRefDS( o ) 
+		DeRefDS( o )
 	}
 }
 #endif
@@ -1587,17 +1588,17 @@ void de_reference(s1_ptr a)
 void DeRef1(object a)
 /* Saves space. Use in top-level code (outside of loops) */
 {
-	DeRef(a) 
+	DeRef(a)
 }
 
 void DeRef5(object a, object b, object c, object d, object e)
 /* Saves space. Use instead of 5 in-line DeRef's */
 {
-	DeRef(a) 
-	DeRef(b) 
-	DeRef(c) 
-	DeRef(d) 
-	DeRef(e) 
+	DeRef(a)
+	DeRef(b)
+	DeRef(c)
+	DeRef(d)
+	DeRef(e)
 }
 
 /* NEW - non-recursive - only integer elements */
@@ -1757,7 +1758,11 @@ object Dremainder(d_ptr a, d_ptr b)
 {
 	if (b->dbl == 0.0)
 		RTFatal("can't get remainder of a number divided by 0");
-	return (object)NewDouble(fmod(a->dbl, b->dbl)); /* for now */
+#if INTPTR_MAX == INT64_MAX
+    return (object)NewDouble(fmodl(a->dbl, b->dbl));
+#else
+	return (object)NewDouble(fmod(a->dbl, b->dbl));
+#endif
 }
 
 object and_bits(uintptr_t a, uintptr_t b)
@@ -1831,7 +1836,7 @@ object Dnot_bits(d_ptr a)
 #endif
 }
 
-#if defined(EFREEBSD) && INTPTR_MAX != INT32_MAX
+#if defined(__FreeBSD__) && INTPTR_MAX != INT32_MAX
 long double powl( long double a, long double b ){
 	return (long double) pow( (double) a, (double) b );
 }
@@ -2200,7 +2205,7 @@ void setran()
 {
 	time_t time_of_day;
 	struct tm *local;
-#if !defined( EWINDOWS )
+#if !defined( _WIN32 )
 	object garbage;
 #endif
 	static int32_t src = prim1 ^ prim2;
@@ -2209,7 +2214,7 @@ void setran()
 	local = localtime(&time_of_day);
 	seed2 = local->tm_yday * 86400 + local->tm_hour * 3600 +
 			local->tm_min * 60 +     local->tm_sec;
-#ifdef EWINDOWS
+#ifdef _WIN32
 	seed1 = GetTickCount() + src;  // milliseconds since Windows started
 #else
 	seed1 = (int32_t)(0xffffffff & (uintptr_t)&garbage) + random() + src;
@@ -3020,7 +3025,7 @@ object calc_hash(object a, object b)
 			else {
 				seeder.ieee_double = (DBL_PTR(lTemp)->dbl);
 			}
-			DeRef(lTemp) 
+			DeRef(lTemp)
 		}
 		else {
 			seeder.ieee_uint.a = b;
@@ -3039,7 +3044,7 @@ object calc_hash(object a, object b)
 		else {
 			seeder.ieee_double = (DBL_PTR(lTemp)->dbl);
 		}
-		DeRef(lTemp) 
+		DeRef(lTemp)
 	}
 
 	lHashValue = 0x193A74F1;
@@ -3122,7 +3127,7 @@ object calc_hash(object a, object b)
 				{
 					tf.ieee_double = (DBL_PTR(lTemp)->dbl);
 				}
-				DeRef(lTemp) 
+				DeRef(lTemp)
 			}
 
 			tf.ieee_uint.a += prev.ieee_uint.b;
@@ -3440,13 +3445,13 @@ void RHS_Slice( object a, object start, object end)
 
 		/* deref the lower excluded elements */
 		for (; p <= olda->base; p++)
-			DeRef(*p) 
+			DeRef(*p)
 
 		/* deref the upper excluded elements */
 		for (p = olda->base + 1 + length;
 			 p <= olda->base + 1 + olda->length - startval;
 			 p++)
-			DeRef(*p) 
+			DeRef(*p)
 
 		olda->postfill += olda->length - endval;
 		olda->length = length;
@@ -3523,7 +3528,7 @@ void AssignSlice(object start, object end, object val)
 			(DBL_PTR(val)->ref) += length;
 
 		while (--length >= 0) {
-			DeRef(*s_elem) 
+			DeRef(*s_elem)
 			*s_elem++ = (object)val;
 		}
 	}
@@ -3540,7 +3545,7 @@ void AssignSlice(object start, object end, object val)
 					break;
 				RefDS(*v_elem);
 			}
-			DeRef(*s_elem) 
+			DeRef(*s_elem)
 			*s_elem++ = *v_elem++;
 		}
 	}
@@ -3763,7 +3768,7 @@ object EOpen(object filename, object mode_obj, object cleanup)
 	if (i < MAX_USER_FILE) {
 		if (strcmp_ins("con", cname) == 0) {
 			// opening console
-#ifdef EWINDOWS
+#ifdef _WIN32
 			show_console();
 #endif
 			con_was_opened = TRUE;
@@ -4344,7 +4349,7 @@ object_ptr v_elem;
 			EFree(sval);
 	}
 	else if (c == 'd' || c == 'x' || c == 'o') {
-#if defined( EWINDOWS ) && INTPTR_MAX == INT64_MAX
+#if defined( _WIN32 ) && INTPTR_MAX == INT64_MAX
 		cstring[flen++] = 'l';
 #endif
 		cstring[flen++] = 'l';
@@ -4574,7 +4579,7 @@ int nodelaych(int wait)
 }
 #endif
 
-#if defined(EWINDOWS) && defined(EMINGW)
+#if defined(_WIN32) && defined(EMINGW)
 int winkbhit();
 #endif
 
@@ -4584,7 +4589,7 @@ int get_key(int wait)
 {
 	int a;
 
-#ifdef EWINDOWS
+#ifdef _WIN32
 		if (wait || winkbhit()) {
 			a = getKBcode();
 
@@ -4813,7 +4818,7 @@ int CRoutineId(int seq_num, int current_file_no, object name)
 	}
 }
 
-#ifdef EWINDOWS
+#ifdef _WIN32
 	typedef void WINAPI (*VfP_t)(void *);
 	typedef void WINAPI (*Vf_t)(void);	
 #endif
@@ -4821,7 +4826,7 @@ void eu_startup(struct routine_list *rl, struct ns_list *nl, unsigned char **ip,
 				int cps, int clk)
 /* Initialize run-time data structures for the compiled user program. */
 {
-	#ifdef EWINDOWS
+	#ifdef _WIN32
 		HMODULE Comctl32;
 		VfP_t initCommonControlsPtr;
 		Vf_t initCommonControls95Ptr;
@@ -4842,7 +4847,7 @@ void eu_startup(struct routine_list *rl, struct ns_list *nl, unsigned char **ip,
 	copy_string(TempErrName, "ex.err", TempErrName_len);
 	TempWarningName = NULL;
 	display_warnings = 1;
-#ifdef EWINDOWS
+#ifdef _WIN32
 	{
 		/* Make sure the common controls stuff is initialized.
 		 * Since we use a manifest, we have to make sure that
@@ -4885,7 +4890,7 @@ void Position(object line, object col)
 		col_val = (int)(DBL_PTR(col)->dbl);     /* need better check here too */
 	}
 	if (line_val < 1 ||
-#ifdef EWINDOWS
+#ifdef _WIN32
 	line_val > line_max ||
 #endif
 		 col_val < 1 ||  col_val > col_max) {
@@ -4896,7 +4901,7 @@ void Position(object line, object col)
 	SetPosition(line_val, col_val);
 }
 
-#ifdef EWINDOWS
+#ifdef _WIN32
 
 char *get_module_name(){
 	int ns, bs;
@@ -4932,7 +4937,7 @@ char **make_arg_cv(char *cmdline, int *argc, int skip_leading_dquote)
 	int i, w, j;
 	char **argv;
 	InitEMalloc();
-#ifdef EWINDOWS
+#ifdef _WIN32
 	if( cmdline == NULL ){
 		// Windows already did the work for us
 		*argc = __argc;
@@ -4941,7 +4946,7 @@ char **make_arg_cv(char *cmdline, int *argc, int skip_leading_dquote)
 	}
 #endif
 	argv = (char **)EMalloc((strlen(cmdline)/2+3) * sizeof(char *));
-#ifdef EWINDOWS
+#ifdef _WIN32
 	if (*argc == 1) {
 		argv[0] = get_module_name();
 		w = 1;
@@ -5046,6 +5051,9 @@ void system_call(object command, object wait)
 		RestoreConfig();
 }
 
+#ifdef __WATCOMC__
+#define _spawnvp spawnvp
+#endif
 
 object system_exec_call(object command, object wait)
 /* Run a .exe or .com file, then restore the graphics mode.
@@ -5273,13 +5281,19 @@ object make_atom32(unsigned c32)
 		return NewDouble((eudouble)c32);
 }
 
+object make_satom(intptr_t c)
+{
+	if (c <= MAXINT && c > MININT) {
+		return c;
+	} else {
+		return NewDouble((eudouble)c);
+	}
+}
+
 object make_atom(uintptr_t c)
 /* make a Euphoria atom from an unsigned C value */
 {
-	if (c <= (uintptr_t)MAXINT)
-		return c;
-	else
-		return NewDouble((eudouble)c);
+	return make_satom((intptr_t)c);
 }
 
 uintptr_t general_call_back(
@@ -5417,39 +5431,39 @@ uintptr_t general_call_back(
 	num_args = cb_routine->u.subp.num_args;
 
 	if (num_args >= 1) {
-	  DeRef(call_back_arg1->obj) 
-	  call_back_arg1->obj = make_atom((uintptr_t)arg1);
+	  DeRef(call_back_arg1->obj)
+	  call_back_arg1->obj = make_satom(arg1);
 	  code[2] = (object *)call_back_arg1;
 	  if (num_args >= 2) {
-		DeRef(call_back_arg2->obj) 
+		DeRef(call_back_arg2->obj)
 		call_back_arg2->obj = make_atom((uintptr_t)arg2);
 		code[3] = (object *)call_back_arg2;
 		if (num_args >= 3) {
-		  DeRef(call_back_arg3->obj) 
+		  DeRef(call_back_arg3->obj)
 		  call_back_arg3->obj = make_atom((uintptr_t)arg3);
 		  code[4] = (object *)call_back_arg3;
 		  if (num_args >= 4) {
-			DeRef(call_back_arg4->obj) 
+			DeRef(call_back_arg4->obj)
 			call_back_arg4->obj = make_atom((uintptr_t)arg4);
 			code[5] = (object *)call_back_arg4;
 			if (num_args >= 5) {
-			  DeRef(call_back_arg5->obj) 
+			  DeRef(call_back_arg5->obj)
 			  call_back_arg5->obj = make_atom((uintptr_t)arg5);
 			  code[6] = (object *)call_back_arg5;
 			  if (num_args >= 6) {
-				DeRef(call_back_arg6->obj) 
+				DeRef(call_back_arg6->obj)
 				call_back_arg6->obj = make_atom((uintptr_t)arg6);
 				code[7] = (object *)call_back_arg6;
 				if (num_args >= 7) {
-				  DeRef(call_back_arg7->obj) 
+				  DeRef(call_back_arg7->obj)
 				  call_back_arg7->obj = make_atom((uintptr_t)arg7);
 				  code[8] = (object *)call_back_arg7;
 				  if (num_args >= 8) {
-					DeRef(call_back_arg8->obj) 
+					DeRef(call_back_arg8->obj)
 					call_back_arg8->obj = make_atom((uintptr_t)arg8);
 					code[9] = (object *)call_back_arg8;
 					if (num_args >= 9) {
-					  DeRef(call_back_arg9->obj) 
+					  DeRef(call_back_arg9->obj)
 					  call_back_arg9->obj = make_atom((uintptr_t)arg9);
 					  code[10] = (object *)call_back_arg9;
 					}
@@ -5781,11 +5795,11 @@ void Cleanup(int status)
 
 	// Note: ExitProcess() - frees all the dlls but won't flush the regular files
 	for (i = 0; i < open_dll_count; i++) {
-#ifdef EWINDOWS
+#ifdef _WIN32
 		FreeLibrary(open_dll_list[i]);
 #else
 		dlclose( open_dll_list[i] );
-#endif // EWINDOWS
+#endif // _WIN32
 	}
 #if 0
 	{
@@ -5811,7 +5825,7 @@ void Cleanup(int status)
 		sym = TopLevelSub;
 		while( sym ){
 			if( sym->mode == M_NORMAL ){
-				DeRef( sym->obj ) 
+				DeRef( sym->obj )
 				sym->obj = NOVALUE;
 			}
 			sym = sym->next;
@@ -5837,7 +5851,7 @@ void Cleanup(int status)
 			++sym;
 			for( i = 1; i <= len; ++i, ++sym ){
 				if( sym->mode == M_CONSTANT ){
-					DeRef( sym->obj ) 
+					DeRef( sym->obj )
 					sym->obj = NOVALUE;
 				}
 			}
@@ -5869,7 +5883,7 @@ int getKBchar()
 }
 #endif
 
-#ifdef EWINDOWS
+#ifdef _WIN32
 static char one_line[300];
 static char *next_char_ptr = NULL;
 
@@ -5934,7 +5948,7 @@ void key_gets(char *input_string, int buffsize)
 	numpad_enter = VK_to_EuKBCode[VK_RETURN];
 	left_arrow   = VK_to_EuKBCode[VK_LEFT];
 	
-#ifdef EWINDOWS
+#ifdef _WIN32
 	show_console();
 #endif	
 	GetTextPositionP(&cursor);
@@ -5960,7 +5974,7 @@ void key_gets(char *input_string, int buffsize)
 		if (c == CR || c == LF || c == numpad_enter)
 			break;
 
-#ifndef WINDOWS
+#ifndef _WIN32
 		if( c == 27 ){
 			char d, e;
 			// escape code!
@@ -6228,10 +6242,10 @@ void Replace( replace_ptr rb )
 	target = *rb->target;
 	if (start_pos < 2 ) { //replacing start or all
 		if (end_pos == seqlen) { // all
-			Ref(copy_from) 
+			Ref(copy_from)
 			if( IS_SEQUENCE( copy_from ) ){
 				*rb->target = copy_from;
-				DeRef(target) 
+				DeRef(target)
 			}
 			else{
 				if( IS_SEQUENCE( target ) && UNIQUE( SEQ_PTR(target) ) ){
@@ -6245,7 +6259,7 @@ void Replace( replace_ptr rb )
 					s1 = NewS1( 1 );
 					s1->base[1] = copy_from;
 					*rb->target = MAKE_SEQ( s1 );
-					DeRef( target ) 
+					DeRef( target )
 				}
 			}
 			return;
@@ -6262,7 +6276,7 @@ void Replace( replace_ptr rb )
 			if( (target != copy_to) || ( SEQ_PTR( copy_to )->ref != 1 ) ){
 				// not in place: need to deref the target and ref the orig seq
 				if( target != NOVALUE ){
-					DeRef(target) 
+					DeRef(target)
 				}
 
 				// ensures that Add_internal_space will make a copy
@@ -6282,7 +6296,7 @@ void Replace( replace_ptr rb )
 		}
 		else{
 			if( target != NOVALUE ){
-				DeRef(target) 
+				DeRef(target)
 			}
 			RefDS( copy_to );
 			*rb->target = Insert( copy_to, copy_from, start_pos);
@@ -6302,7 +6316,7 @@ void Replace( replace_ptr rb )
 		*/
 			if( target != copy_to ){
 				if( target != NOVALUE ){
-					DeRef(target) 
+					DeRef(target)
 				}
 				RefDS( copy_to );
 			}
@@ -6334,7 +6348,7 @@ void Replace( replace_ptr rb )
 				}
 				else{
 					*rb->target = Remove_elements( start_pos + replace_len, end_pos, 0 );
-					DeRef( target ) 
+					DeRef( target )
 				}
 				s1 = SEQ_PTR(*rb->target);
 				assign_slice_seq = &s1;
@@ -6343,24 +6357,24 @@ void Replace( replace_ptr rb )
 			else {
 				int replace_elements = target == copy_to;
 				if( !replace_elements ){
-					DeRef( target ) 
+					DeRef( target )
 				}
 				else if( !UNIQUE( SEQ_PTR( target ) ) ){
-					DeRef( target ) 
+					DeRef( target )
 					replace_elements = 0;
 				}
 				s1 = Copy_elements( start_pos, s2, replace_elements );
 			}
 			*rb->target = MAKE_SEQ( s1 );
 			if( c ){
-				DeRefDS(copy_to) 
+				DeRefDS(copy_to)
 			}
 		}
 	}
 	else {  // replacing by an atom
 		s1 = SEQ_PTR(copy_to);
 		assign_slice_seq = &s1;
-		Ref( copy_from ) 
+		Ref( copy_from )
 		if (start_pos < end_pos) {
 			object_ptr optr;
 			if( copy_to == target && SEQ_PTR( target )->ref == 1 ){
@@ -6368,10 +6382,10 @@ void Replace( replace_ptr rb )
 			}
 			else{
 				*rb->target = Remove_elements( start_pos + 1, end_pos, 0);
-				DeRef( target ) 
+				DeRef( target )
 			}
 			optr = SEQ_PTR( *rb->target )->base+start_pos;
-			DeRef(*optr) 
+			DeRef(*optr)
 			*optr = copy_from;
 		}
 		else{
@@ -6467,6 +6481,8 @@ object eu_sizeof( object data_type ){
 			return sizeof( long );
 		case C_LONGLONG:
 			return sizeof( long long );
+		case C_ULONGLONG:
+			return sizeof( unsigned long long );
 		default:
 			return 0;
 	}

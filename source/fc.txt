@@ -1,0 +1,1753 @@
+C:\Euphoria\source>for %i in (*.c) do fc %i ..\source-before\%i >> fc.txt
+Comparing files be_alloc.c and ..\SOURCE-BEFORE\BE_ALLOC.C
+***** be_alloc.c
+        }
+        DeRefSP(a)
+        return c;
+***** ..\SOURCE-BEFORE\BE_ALLOC.C
+        }
+        DeRefSP(a);
+        return c;
+*****
+
+Comparing files be_callc.c and ..\SOURCE-BEFORE\BE_CALLC.C
+FC: no differences encountered
+
+Comparing files be_coverage.c and ..\SOURCE-BEFORE\BE_COVERAGE.C
+FC: no differences encountered
+
+Comparing files be_debug.c and ..\SOURCE-BEFORE\BE_DEBUG.C
+FC: no differences encountered
+
+Comparing files be_decompress.c and ..\SOURCE-BEFORE\BE_DECOMPRESS.C
+FC: no differences encountered
+
+Comparing files be_execute.c and ..\SOURCE-BEFORE\BE_EXECUTE.C
+***** be_execute.c
+                                          else {                         \
+                                                   DeRefDSx(a)              \
+                                          }
+***** ..\SOURCE-BEFORE\BE_EXECUTE.C
+                                          else {                         \
+                                                   DeRefDSx(a);              \
+                                          }
+*****
+
+***** be_execute.c
+                                                  pc += 4;                   \
+                                                  DeRef(a)                  \
+                                          }
+***** ..\SOURCE-BEFORE\BE_EXECUTE.C
+                                                  pc += 4;                   \
+                                                  DeRef(a);                  \
+                                          }
+*****
+
+***** be_execute.c
+                                                        else                  \
+                                                                DeRefDSx(a)       \
+                                                }                         \
+***** ..\SOURCE-BEFORE\BE_EXECUTE.C
+                                                        else                  \
+                                                                DeRefDSx(a);       \
+                                                }                         \
+*****
+
+***** be_execute.c
+                                                        inc3pc();              \
+                                                        DeRef(a)             \
+                                                }
+***** ..\SOURCE-BEFORE\BE_EXECUTE.C
+                                                        inc3pc();              \
+                                                        DeRef(a);             \
+                                                }
+*****
+
+***** be_execute.c
+        RefDS( map );
+        Ref( key )
+        Ref( value )
+        internal_general_call_back( map_put, map, key, value, operation, 23 /* default threshold */, 0, 0, 0, 0 );
+***** ..\SOURCE-BEFORE\BE_EXECUTE.C
+        RefDS( map );
+        Ref( key );
+        Ref( value );
+        internal_general_call_back( map_put, map, key, value, operation, 23 /* default threshold */, 0, 0, 0, 0 );
+*****
+
+***** be_execute.c
+        RefDS( map );
+        Ref( key )
+        Ref( default_value )
+        return internal_general_call_back( map_get, map, key, default_value, 0, 0, 0, 0, 0, 0 );
+***** ..\SOURCE-BEFORE\BE_EXECUTE.C
+        RefDS( map );
+        Ref( key );
+        Ref( default_value );
+        return internal_general_call_back( map_get, map, key, default_value, 0, 0, 0, 0, 0, 0 );
+*****
+
+***** be_execute.c
+                                if (IS_ATOM_INT(a)) {
+                                        DeRefDS(top)
+                                        top = a;
+***** ..\SOURCE-BEFORE\BE_EXECUTE.C
+                                if (IS_ATOM_INT(a)) {
+                                        DeRefDS(top);
+                                        top = a;
+*****
+
+***** be_execute.c
+                }
+                Ref( new_values->base[i] )
+                
+***** ..\SOURCE-BEFORE\BE_EXECUTE.C
+                }
+                Ref( new_values->base[i] );
+                
+*****
+
+***** be_execute.c
+                }
+                DeRefDS( check_map )
+        }
+        DeRefDS( unique_jumps )
+        DeRefDS( empty_sequence )
+        DeRefDS( unique_values_obj )
+
+        DeRefDS( MAKE_SEQ( values ) )
+        if( all_ints &&  max - min < 1024){
+***** ..\SOURCE-BEFORE\BE_EXECUTE.C
+                }
+                DeRefDS( check_map );
+        }
+        DeRefDS( unique_jumps );
+        DeRefDS( empty_sequence );
+        DeRefDS( unique_values_obj );
+
+        DeRefDS( MAKE_SEQ( values ) );
+        if( all_ints &&  max - min < 1024){
+*****
+
+***** be_execute.c
+                tpc[2] = (intptr_t)offset;
+                DeRefDS( *(object_ptr)tpc[3] )
+                *(object_ptr)tpc[3] = (object)MAKE_SEQ( lookup );
+***** ..\SOURCE-BEFORE\BE_EXECUTE.C
+                tpc[2] = (intptr_t)offset;
+                DeRefDS( *(object_ptr)tpc[3] );
+                *(object_ptr)tpc[3] = (object)MAKE_SEQ( lookup );
+*****
+
+***** be_execute.c
+
+                                Ref( top )
+                                DeRef( ((symtab_ptr)a)->obj )
+
+***** ..\SOURCE-BEFORE\BE_EXECUTE.C
+
+                                Ref( top );
+                                DeRef( ((symtab_ptr)a)->obj );
+
+*****
+
+***** be_execute.c
+                                        else {
+                                                DeRefDSx(*(object_ptr)a)
+                                                *(object_ptr)a = top;
+***** ..\SOURCE-BEFORE\BE_EXECUTE.C
+                                        else {
+                                                DeRefDSx(*(object_ptr)a);
+                                                *(object_ptr)a = top;
+*****
+
+***** be_execute.c
+                                        RefDS(top);
+                                        DeRefx(*(object_ptr)a)
+                                        *(object_ptr)a = top;
+***** ..\SOURCE-BEFORE\BE_EXECUTE.C
+                                        RefDS(top);
+                                        DeRefx(*(object_ptr)a);
+                                        *(object_ptr)a = top;
+*****
+
+***** be_execute.c
+                                top = *(object_ptr)pc[3];  /* the rhs value */
+                                Ref(top) /* do before UNIQUE check - avoids circularity */
+                                obj_ptr = (object_ptr)SEQ_PTR(**(object_ptr **)pc[1]);
+***** ..\SOURCE-BEFORE\BE_EXECUTE.C
+                                top = *(object_ptr)pc[3];  /* the rhs value */
+                                Ref(top); /* do before UNIQUE check - avoids circularity */
+                                obj_ptr = (object_ptr)SEQ_PTR(**(object_ptr **)pc[1]);
+*****
+
+***** be_execute.c
+                                top = *(object_ptr)pc[3];  /* the rhs value */
+                                Ref(top) /* do before UNIQUE check - avoids circularity */
+                                obj_ptr = (object_ptr)SEQ_PTR(*(object_ptr *)pc[1]);
+***** ..\SOURCE-BEFORE\BE_EXECUTE.C
+                                top = *(object_ptr)pc[3];  /* the rhs value */
+                                Ref(top); /* do before UNIQUE check - avoids circularity */
+                                obj_ptr = (object_ptr)SEQ_PTR(*(object_ptr *)pc[1]);
+*****
+
+***** be_execute.c
+                                else {
+                                        DeRefDSx(a)
+                                        thread();
+***** ..\SOURCE-BEFORE\BE_EXECUTE.C
+                                else {
+                                        DeRefDSx(a);
+                                        thread();
+*****
+
+***** be_execute.c
+                                else {
+                                        DeRefDSx(top)
+                                        thread();
+***** ..\SOURCE-BEFORE\BE_EXECUTE.C
+                                else {
+                                        DeRefDSx(top);
+                                        thread();
+*****
+
+***** be_execute.c
+                                }
+                                DeRefx(*(object_ptr)a)
+                                *(object_ptr)a = top;
+***** ..\SOURCE-BEFORE\BE_EXECUTE.C
+                                }
+                                DeRefx(*(object_ptr)a);
+                                *(object_ptr)a = top;
+*****
+
+***** be_execute.c
+                                                if (IS_ATOM_INT(b)) {
+                                                        DeRefDS(top)
+                                                        *(object_ptr)a = b;
+***** ..\SOURCE-BEFORE\BE_EXECUTE.C
+                                                if (IS_ATOM_INT(b)) {
+                                                        DeRefDS(top);
+                                                        *(object_ptr)a = b;
+*****
+
+***** be_execute.c
+
+                                Ref(*obj_ptr)
+
+***** ..\SOURCE-BEFORE\BE_EXECUTE.C
+
+                                Ref(*obj_ptr);
+
+*****
+
+***** be_execute.c
+                                else {
+                                        DeRefDSx(top)
+                                        inc3pc();
+***** ..\SOURCE-BEFORE\BE_EXECUTE.C
+                                else {
+                                        DeRefDSx(top);
+                                        inc3pc();
+*****
+
+***** be_execute.c
+                                a = *(object_ptr)pc[1];
+                                Ref(a)
+                                *obj_ptr = a;
+***** ..\SOURCE-BEFORE\BE_EXECUTE.C
+                                a = *(object_ptr)pc[1];
+                                Ref(a);
+                                *obj_ptr = a;
+*****
+
+***** be_execute.c
+                                        *obj_ptr = *((object_ptr)pc[0]);
+                                        Ref(*obj_ptr)
+                                        pc++;
+***** ..\SOURCE-BEFORE\BE_EXECUTE.C
+                                        *obj_ptr = *((object_ptr)pc[0]);
+                                        Ref(*obj_ptr);
+                                        pc++;
+*****
+
+***** be_execute.c
+                                }
+                                DeRef(*(object_ptr)pc[0])
+                                *(object_ptr)pc[0] = MAKE_SEQ(s1);
+***** ..\SOURCE-BEFORE\BE_EXECUTE.C
+                                }
+                                DeRef(*(object_ptr)pc[0]);
+                                *(object_ptr)pc[0] = MAKE_SEQ(s1);
+*****
+
+***** be_execute.c
+                                obj_ptr[1] = *((object_ptr)pc[2]);
+                                Ref(obj_ptr[1])
+                                obj_ptr[2] = *((object_ptr)pc[1]);
+                                Ref(obj_ptr[2])
+                                DeRef(*(object_ptr)pc[3])
+                                *(object_ptr)pc[3] = MAKE_SEQ(s1);
+***** ..\SOURCE-BEFORE\BE_EXECUTE.C
+                                obj_ptr[1] = *((object_ptr)pc[2]);
+                                Ref(obj_ptr[1]);
+                                obj_ptr[2] = *((object_ptr)pc[1]);
+                                Ref(obj_ptr[2]);
+                                DeRef(*(object_ptr)pc[3]);
+                                *(object_ptr)pc[3] = MAKE_SEQ(s1);
+*****
+
+***** be_execute.c
+                                                }
+                                                DeRefDS(top)
+                                                *(object_ptr)pc[-1] = a;
+***** ..\SOURCE-BEFORE\BE_EXECUTE.C
+                                                }
+                                                DeRefDS(top);
+                                                *(object_ptr)pc[-1] = a;
+*****
+
+***** be_execute.c
+                                }
+                                DeRefx(*(object_ptr)pc[2])
+                                *(object_ptr)pc[2] = top;
+***** ..\SOURCE-BEFORE\BE_EXECUTE.C
+                                }
+                                DeRefx(*(object_ptr)pc[2]);
+                                *(object_ptr)pc[2] = top;
+*****
+
+***** be_execute.c
+                                if( ((symtab_ptr)pc[1])->mode == M_TEMP ){
+                                        DeRef( ((symtab_ptr)pc[1])->obj )
+                                        ((symtab_ptr)pc[1])->obj = NOVALUE;
+***** ..\SOURCE-BEFORE\BE_EXECUTE.C
+                                if( ((symtab_ptr)pc[1])->mode == M_TEMP ){
+                                        DeRef( ((symtab_ptr)pc[1])->obj );
+                                        ((symtab_ptr)pc[1])->obj = NOVALUE;
+*****
+
+***** be_execute.c
+                                }
+                                DeRefx(*(object_ptr)pc[2])
+                                *(object_ptr)pc[2] = top;
+***** ..\SOURCE-BEFORE\BE_EXECUTE.C
+                                }
+                                DeRefx(*(object_ptr)pc[2]);
+                                *(object_ptr)pc[2] = top;
+*****
+
+***** be_execute.c
+                                if( ((symtab_ptr)pc[1])->mode == M_TEMP ){
+                                        DeRef( ((symtab_ptr)pc[1])->obj )
+                                        ((symtab_ptr)pc[1])->obj = NOVALUE;
+***** ..\SOURCE-BEFORE\BE_EXECUTE.C
+                                if( ((symtab_ptr)pc[1])->mode == M_TEMP ){
+                                        DeRef( ((symtab_ptr)pc[1])->obj );
+                                        ((symtab_ptr)pc[1])->obj = NOVALUE;
+*****
+
+***** be_execute.c
+                                }
+                                DeRefx(*(object_ptr)pc[2])
+                                *(object_ptr)pc[2] = top;
+***** ..\SOURCE-BEFORE\BE_EXECUTE.C
+                                }
+                                DeRefx(*(object_ptr)pc[2]);
+                                *(object_ptr)pc[2] = top;
+*****
+
+***** be_execute.c
+                                if( ((symtab_ptr)pc[1])->mode == M_TEMP ){
+                                        DeRef( ((symtab_ptr)pc[1])->obj )
+                                        ((symtab_ptr)pc[1])->obj = NOVALUE;
+***** ..\SOURCE-BEFORE\BE_EXECUTE.C
+                                if( ((symtab_ptr)pc[1])->mode == M_TEMP ){
+                                        DeRef( ((symtab_ptr)pc[1])->obj );
+                                        ((symtab_ptr)pc[1])->obj = NOVALUE;
+*****
+
+***** be_execute.c
+                                }
+                                DeRefx(*(object_ptr)pc[2])
+                                *(object_ptr)pc[2] = top;
+***** ..\SOURCE-BEFORE\BE_EXECUTE.C
+                                }
+                                DeRefx(*(object_ptr)pc[2]);
+                                *(object_ptr)pc[2] = top;
+*****
+
+***** be_execute.c
+                                        if( ((symtab_ptr)pc[1])->mode == M_TEMP ){
+                                                DeRef( ((symtab_ptr)pc[1])->obj )
+                                                ((symtab_ptr)pc[1])->obj = NOVALUE;
+***** ..\SOURCE-BEFORE\BE_EXECUTE.C
+                                        if( ((symtab_ptr)pc[1])->mode == M_TEMP ){
+                                                DeRef( ((symtab_ptr)pc[1])->obj );
+                                                ((symtab_ptr)pc[1])->obj = NOVALUE;
+*****
+
+***** be_execute.c
+                                obj_ptr = (object_ptr)pc[2];
+                                DeRefx(*obj_ptr)
+                                *obj_ptr = top;
+***** ..\SOURCE-BEFORE\BE_EXECUTE.C
+                                obj_ptr = (object_ptr)pc[2];
+                                DeRefx(*obj_ptr);
+                                *obj_ptr = top;
+*****
+
+***** be_execute.c
+                                }
+                                DeRef(*(object_ptr)pc[2])
+                                *(object_ptr)pc[2] = top;
+***** ..\SOURCE-BEFORE\BE_EXECUTE.C
+                                }
+                                DeRef(*(object_ptr)pc[2]);
+                                *(object_ptr)pc[2] = top;
+*****
+
+***** be_execute.c
+                                        top = unary_op(a, top);
+                                DeRef(*(object_ptr)pc[2])
+                                *(object_ptr)pc[2] = top;
+***** ..\SOURCE-BEFORE\BE_EXECUTE.C
+                                        top = unary_op(a, top);
+                                DeRef(*(object_ptr)pc[2]);
+                                *(object_ptr)pc[2] = top;
+*****
+
+***** be_execute.c
+                                        else {
+                                                DeRefDS(a)
+                                        }
+***** ..\SOURCE-BEFORE\BE_EXECUTE.C
+                                        else {
+                                                DeRefDS(a);
+                                        }
+*****
+
+***** be_execute.c
+                                }
+                                DeRefx(*(object_ptr)pc[3])
+                                *(object_ptr)pc[3] = top;
+***** ..\SOURCE-BEFORE\BE_EXECUTE.C
+                                }
+                                DeRefx(*(object_ptr)pc[3]);
+                                *(object_ptr)pc[3] = top;
+*****
+
+***** be_execute.c
+                                        top = unary_op(FLOOR, a);
+                                        DeRef(a)
+                                }
+                                DeRefx(*(object_ptr)pc[3])
+                                *(object_ptr)pc[3] = top;
+***** ..\SOURCE-BEFORE\BE_EXECUTE.C
+                                        top = unary_op(FLOOR, a);
+                                        DeRef(a);
+                                }
+                                DeRefx(*(object_ptr)pc[3]);
+                                *(object_ptr)pc[3] = top;
+*****
+
+***** be_execute.c
+                                        b = unary_op(FLOOR, a);
+                                        DeRef(a)
+                                }
+                                DeRef(*(object_ptr)pc[3])
+                                *(object_ptr)pc[3] = b;
+***** ..\SOURCE-BEFORE\BE_EXECUTE.C
+                                        b = unary_op(FLOOR, a);
+                                        DeRef(a);
+                                }
+                                DeRef(*(object_ptr)pc[3]);
+                                *(object_ptr)pc[3] = b;
+*****
+
+***** be_execute.c
+                                        if (top == ATOM_0) {
+                                                DeRefx(*(object_ptr)pc[2])
+                                                *(object_ptr)pc[2] = ATOM_0;
+***** ..\SOURCE-BEFORE\BE_EXECUTE.C
+                                        if (top == ATOM_0) {
+                                                DeRefx(*(object_ptr)pc[2]);
+                                                *(object_ptr)pc[2] = ATOM_0;
+*****
+
+***** be_execute.c
+                                        if (DBL_PTR(top)->dbl == 0.0) {
+                                                DeRefx(*(object_ptr)pc[2])
+                                                *(object_ptr)pc[2] = ATOM_0;
+***** ..\SOURCE-BEFORE\BE_EXECUTE.C
+                                        if (DBL_PTR(top)->dbl == 0.0) {
+                                                DeRefx(*(object_ptr)pc[2]);
+                                                *(object_ptr)pc[2] = ATOM_0;
+*****
+
+***** be_execute.c
+                                top = *(object_ptr)pc[1];
+                                DeRefx(*(object_ptr)pc[2])
+                                if (IS_ATOM_INT(top)) {
+***** ..\SOURCE-BEFORE\BE_EXECUTE.C
+                                top = *(object_ptr)pc[1];
+                                DeRefx(*(object_ptr)pc[2]);
+                                if (IS_ATOM_INT(top)) {
+*****
+
+***** be_execute.c
+                                        if (top != ATOM_0) {
+                                                DeRefx(*(object_ptr)pc[2])
+                                                *(object_ptr)pc[2] = ATOM_1;
+***** ..\SOURCE-BEFORE\BE_EXECUTE.C
+                                        if (top != ATOM_0) {
+                                                DeRefx(*(object_ptr)pc[2]);
+                                                *(object_ptr)pc[2] = ATOM_1;
+*****
+
+***** be_execute.c
+                                        if (DBL_PTR(top)->dbl != 0.0) {
+                                                DeRefx(*(object_ptr)pc[2])
+                                                *(object_ptr)pc[2] = ATOM_1;
+***** ..\SOURCE-BEFORE\BE_EXECUTE.C
+                                        if (DBL_PTR(top)->dbl != 0.0) {
+                                                DeRefx(*(object_ptr)pc[2]);
+                                                *(object_ptr)pc[2] = ATOM_1;
+*****
+
+***** be_execute.c
+                                *obj_ptr = c;
+                                Ref(c)
+                                DeRefx(top)
+                                top = *(object_ptr)pc[1];    /* inc */
+***** ..\SOURCE-BEFORE\BE_EXECUTE.C
+                                *obj_ptr = c;
+                                Ref(c);
+                                DeRefx(top);
+                                top = *(object_ptr)pc[1];    /* inc */
+*****
+
+***** be_execute.c
+                                                i = going_up ? ENDFOR_UP : ENDFOR_DOWN;
+                                                /* Ref(top) inc */
+                                                /* Ref(a)   limit */
+                                        }
+***** ..\SOURCE-BEFORE\BE_EXECUTE.C
+                                                i = going_up ? ENDFOR_UP : ENDFOR_DOWN;
+                                                /* Ref(top); inc */
+                                                /* Ref(a);   limit */
+                                        }
+*****
+
+***** be_execute.c
+                                if (binary_op_a(GREATER, top, *(object_ptr)pc[2]) == ATOM_1) {
+                                        DeRef(top)
+                                        thread5();
+***** ..\SOURCE-BEFORE\BE_EXECUTE.C
+                                if (binary_op_a(GREATER, top, *(object_ptr)pc[2]) == ATOM_1) {
+                                        DeRef(top);
+                                        thread5();
+*****
+
+***** be_execute.c
+                                else {
+                                        DeRef(*obj_ptr)
+                                        *obj_ptr = top;
+***** ..\SOURCE-BEFORE\BE_EXECUTE.C
+                                else {
+                                        DeRef(*obj_ptr);
+                                        *obj_ptr = top;
+*****
+
+***** be_execute.c
+                                if (binary_op_a(LESS, top, *(object_ptr)pc[2]) == ATOM_1) {
+                                        DeRef(top)
+                                        thread5();  /* exit loop */
+***** ..\SOURCE-BEFORE\BE_EXECUTE.C
+                                if (binary_op_a(LESS, top, *(object_ptr)pc[2]) == ATOM_1) {
+                                        DeRef(top);
+                                        thread5();  /* exit loop */
+*****
+
+***** be_execute.c
+                                else {
+                                        DeRef(*obj_ptr)
+                                        *obj_ptr = top;
+***** ..\SOURCE-BEFORE\BE_EXECUTE.C
+                                else {
+                                        DeRef(*obj_ptr);
+                                        *obj_ptr = top;
+*****
+
+***** be_execute.c
+                                                sym->obj = *(object_ptr)obj_ptr[0];
+                                                Ref(sym->obj)
+                                                sym = sym->next;
+***** ..\SOURCE-BEFORE\BE_EXECUTE.C
+                                                sym->obj = *(object_ptr)obj_ptr[0];
+                                                Ref(sym->obj);
+                                                sym = sym->next;
+*****
+
+***** be_execute.c
+                                                sym->obj = *(object_ptr)obj_ptr[0];
+                                                Ref(sym->obj)
+                                                sym = sym->next;
+***** ..\SOURCE-BEFORE\BE_EXECUTE.C
+                                                sym->obj = *(object_ptr)obj_ptr[0];
+                                                Ref(sym->obj);
+                                                sym = sym->next;
+*****
+
+***** be_execute.c
+                                        sym->obj = *(object_ptr)obj_ptr[0];
+                                        Ref(sym->obj)
+                                        DeRef( b )
+                                        sym = sym->next;
+***** ..\SOURCE-BEFORE\BE_EXECUTE.C
+                                        sym->obj = *(object_ptr)obj_ptr[0];
+                                        Ref(sym->obj);
+                                        DeRef( b );
+                                        sym = sym->next;
+*****
+
+***** be_execute.c
+                                while (sym && sym->scope <= S_PRIVATE) {
+                                        DeRef(sym->obj)
+                                        sym->obj = NOVALUE; // not actually needed for params
+***** ..\SOURCE-BEFORE\BE_EXECUTE.C
+                                while (sym && sym->scope <= S_PRIVATE) {
+                                        DeRef(sym->obj);
+                                        sym->obj = NOVALUE; // not actually needed for params
+*****
+
+***** be_execute.c
+                                while (sym != NULL) {
+                                        DeRef(sym->obj)
+                                        sym->obj = NOVALUE;
+***** ..\SOURCE-BEFORE\BE_EXECUTE.C
+                                while (sym != NULL) {
+                                        DeRef(sym->obj);
+                                        sym->obj = NOVALUE;
+*****
+
+***** be_execute.c
+                                result_val = *(object_ptr)pc[3]; /* the return value */
+                                Ref(result_val)
+
+***** ..\SOURCE-BEFORE\BE_EXECUTE.C
+                                result_val = *(object_ptr)pc[3]; /* the return value */
+                                Ref(result_val);
+
+*****
+
+***** be_execute.c
+                                        while( (obj_ptr = (object_ptr)((symtab_ptr)obj_ptr)->next_in_block) ){
+                                                DeRef( *obj_ptr)
+                                                *obj_ptr = NOVALUE;
+***** ..\SOURCE-BEFORE\BE_EXECUTE.C
+                                        while( (obj_ptr = (object_ptr)((symtab_ptr)obj_ptr)->next_in_block) ){
+                                                DeRef( *obj_ptr);
+                                                *obj_ptr = NOVALUE;
+*****
+
+***** be_execute.c
+                                                *result_ptr = result_val; //was important not to use "a"
+                                                DeRef(top)
+                                                if( ((symtab_ptr)tpc[3])->mode == M_TEMP ){
+                                                        DeRef( result_val )
+
+***** ..\SOURCE-BEFORE\BE_EXECUTE.C
+                                                *result_ptr = result_val; //was important not to use "a"
+                                                DeRef(top);
+                                                if( ((symtab_ptr)tpc[3])->mode == M_TEMP ){
+                                                        DeRef( result_val );
+
+*****
+
+***** be_execute.c
+                                while( (sym = sym->next_in_block) ){
+                                        DeRef(sym->obj)
+                                        sym->obj = NOVALUE;
+***** ..\SOURCE-BEFORE\BE_EXECUTE.C
+                                while( (sym = sym->next_in_block) ){
+                                        DeRef(sym->obj);
+                                        sym->obj = NOVALUE;
+*****
+
+***** be_execute.c
+                                b = RoutineId((symtab_ptr)top, a, pc[4]);
+                                DeRefx(*(object_ptr)pc[5])
+                                *(object_ptr)pc[5] = b;
+***** ..\SOURCE-BEFORE\BE_EXECUTE.C
+                                b = RoutineId((symtab_ptr)top, a, pc[4]);
+                                DeRefx(*(object_ptr)pc[5]);
+                                *(object_ptr)pc[5] = b;
+*****
+
+***** be_execute.c
+                                if( a != *obj_ptr ){
+                                        DeRef( *obj_ptr )
+                                        *obj_ptr = a;
+***** ..\SOURCE-BEFORE\BE_EXECUTE.C
+                                if( a != *obj_ptr ){
+                                        DeRef( *obj_ptr );
+                                        *obj_ptr = a;
+*****
+
+***** be_execute.c
+                                deprintf("case L_REF_TEMP:");
+                                Ref( ((symtab_ptr)pc[1])->obj )
+                                pc += 2;
+***** ..\SOURCE-BEFORE\BE_EXECUTE.C
+                                deprintf("case L_REF_TEMP:");
+                                Ref( ((symtab_ptr)pc[1])->obj );
+                                pc += 2;
+*****
+
+***** be_execute.c
+                                deprintf("case L_DEREF_TEMP:");
+                                DeRef( ((symtab_ptr)pc[1])->obj )
+
+***** ..\SOURCE-BEFORE\BE_EXECUTE.C
+                                deprintf("case L_DEREF_TEMP:");
+                                DeRef( ((symtab_ptr)pc[1])->obj );
+
+*****
+
+***** be_execute.c
+                                tpc = pc;
+                                Ref(top)
+                                Append((object_ptr)pc[3], b, top);
+***** ..\SOURCE-BEFORE\BE_EXECUTE.C
+                                tpc = pc;
+                                Ref(top);
+                                Append((object_ptr)pc[3], b, top);
+*****
+
+***** be_execute.c
+                                tpc = pc;
+                                Ref(top)
+                                Prepend((object_ptr)pc[3], b, top);
+***** ..\SOURCE-BEFORE\BE_EXECUTE.C
+                                tpc = pc;
+                                Ref(top);
+                                Prepend((object_ptr)pc[3], b, top);
+*****
+
+***** be_execute.c
+                                        *obj_ptr = a;
+                                        Ref(*obj_ptr)
+                                        DeRef(top)
+                                        thread5();
+***** ..\SOURCE-BEFORE\BE_EXECUTE.C
+                                        *obj_ptr = a;
+                                        Ref(*obj_ptr);
+                                        DeRef(top);
+                                        thread5();
+*****
+
+***** be_execute.c
+                                                *obj_ptr = MAKE_SEQ(NewS1(0));
+                                                DeRef(top)
+                                        }
+***** ..\SOURCE-BEFORE\BE_EXECUTE.C
+                                                *obj_ptr = MAKE_SEQ(NewS1(0));
+                                                DeRef(top);
+                                        }
+*****
+
+***** be_execute.c
+                                        // Caller wants it all. So pass another reference to source.
+                                        Ref(a)
+                                        *obj_ptr = a;
+***** ..\SOURCE-BEFORE\BE_EXECUTE.C
+                                        // Caller wants it all. So pass another reference to source.
+                                        Ref(a);
+                                        *obj_ptr = a;
+*****
+
+***** be_execute.c
+                                if (nvars == 0) {
+                                        DeRef(*obj_ptr)
+                                        *obj_ptr = MAKE_SEQ(NewS1(0));
+***** ..\SOURCE-BEFORE\BE_EXECUTE.C
+                                if (nvars == 0) {
+                                        DeRef(*obj_ptr);
+                                        *obj_ptr = MAKE_SEQ(NewS1(0));
+*****
+
+***** be_execute.c
+                                else if (nvars >= seqlen) {
+                                        DeRef(*obj_ptr)
+                                        Ref(a)
+                                        *obj_ptr = a;
+***** ..\SOURCE-BEFORE\BE_EXECUTE.C
+                                else if (nvars >= seqlen) {
+                                        DeRef(*obj_ptr);
+                                        Ref(a);
+                                        *obj_ptr = a;
+*****
+
+***** be_execute.c
+                                b = *(object_ptr)pc[2]; //the stuff to insert
+                                Ref(b)
+
+***** ..\SOURCE-BEFORE\BE_EXECUTE.C
+                                b = *(object_ptr)pc[2]; //the stuff to insert
+                                Ref(b);
+
+*****
+
+***** be_execute.c
+                                                // not in place: need to deref the target and ref the orig seq
+                                                if( *obj_ptr != NOVALUE ) DeRef(*obj_ptr)
+
+***** ..\SOURCE-BEFORE\BE_EXECUTE.C
+                                                // not in place: need to deref the target and ref the orig seq
+                                                if( *obj_ptr != NOVALUE ) DeRef(*obj_ptr);
+
+*****
+
+***** be_execute.c
+                                        else{
+                                                if( *obj_ptr != NOVALUE ) DeRef(*(obj_ptr))
+                                                RefDS( a );
+***** ..\SOURCE-BEFORE\BE_EXECUTE.C
+                                        else{
+                                                if( *obj_ptr != NOVALUE ) DeRef(*(obj_ptr));
+                                                RefDS( a );
+*****
+
+***** be_execute.c
+                                top = Repeat(*(object_ptr)pc[1], *(object_ptr)pc[2]);
+                                DeRef(*(object_ptr)pc[3])
+                                *(object_ptr)pc[3] = top;
+***** ..\SOURCE-BEFORE\BE_EXECUTE.C
+                                top = Repeat(*(object_ptr)pc[1], *(object_ptr)pc[2]);
+                                DeRef(*(object_ptr)pc[3]);
+                                *(object_ptr)pc[3] = top;
+*****
+
+***** be_execute.c
+                                top = Date();
+                                DeRef(*(object_ptr)pc[1])
+                                *(object_ptr)pc[1] = top;
+***** ..\SOURCE-BEFORE\BE_EXECUTE.C
+                                top = Date();
+                                DeRef(*(object_ptr)pc[1]);
+                                *(object_ptr)pc[1] = top;
+*****
+
+***** be_execute.c
+                                top = NewDouble(current_time());
+                                DeRef(*(object_ptr)pc[1])
+                                *(object_ptr)pc[1] = top;
+***** ..\SOURCE-BEFORE\BE_EXECUTE.C
+                                top = NewDouble(current_time());
+                                DeRef(*(object_ptr)pc[1]);
+                                *(object_ptr)pc[1] = top;
+*****
+
+***** be_execute.c
+                                top = MAKE_INT(bytes_allocated);
+                                DeRef(*(object_ptr)pc[1])
+                                *(object_ptr)pc[1] = top;
+***** ..\SOURCE-BEFORE\BE_EXECUTE.C
+                                top = MAKE_INT(bytes_allocated);
+                                DeRef(*(object_ptr)pc[1]);
+                                *(object_ptr)pc[1] = top;
+*****
+
+***** be_execute.c
+                                obj_ptr = (object_ptr)pc[3];
+                                DeRefx(*obj_ptr)
+                                pc += 4;
+***** ..\SOURCE-BEFORE\BE_EXECUTE.C
+                                obj_ptr = (object_ptr)pc[3];
+                                DeRefx(*obj_ptr);
+                                pc += 4;
+*****
+
+***** be_execute.c
+                                obj_ptr = (object_ptr)pc[3];
+                                DeRefx(*obj_ptr)
+                                pc += 4;
+***** ..\SOURCE-BEFORE\BE_EXECUTE.C
+                                obj_ptr = (object_ptr)pc[3];
+                                DeRefx(*obj_ptr);
+                                pc += 4;
+*****
+
+***** be_execute.c
+                                *(object_ptr)pc[3] = calc_hash(*(object_ptr)pc[1], *(object_ptr)pc[2]);
+                                DeRef( a )
+                                pc += 4;
+***** ..\SOURCE-BEFORE\BE_EXECUTE.C
+                                *(object_ptr)pc[3] = calc_hash(*(object_ptr)pc[1], *(object_ptr)pc[2]);
+                                DeRef( a );
+                                pc += 4;
+*****
+
+***** be_execute.c
+                                top = MAKE_INT(a);
+                                DeRef(*(object_ptr)pc[3])
+                                *(object_ptr)pc[3] = top;
+***** ..\SOURCE-BEFORE\BE_EXECUTE.C
+                                top = MAKE_INT(a);
+                                DeRef(*(object_ptr)pc[3]);
+                                *(object_ptr)pc[3] = top;
+*****
+
+***** be_execute.c
+                                                                         (s1_ptr)*(object_ptr)pc[2]));
+                                DeRef(*(object_ptr)pc[3])
+                                *(object_ptr)pc[3] = top;
+***** ..\SOURCE-BEFORE\BE_EXECUTE.C
+                                                                         (s1_ptr)*(object_ptr)pc[2]));
+                                DeRef(*(object_ptr)pc[3]);
+                                *(object_ptr)pc[3] = top;
+*****
+
+***** be_execute.c
+                                top = do_peek8(a, b);
+                                DeRefx(*(object_ptr)pc[2])
+                                *(object_ptr)pc[2] = top;
+***** ..\SOURCE-BEFORE\BE_EXECUTE.C
+                                top = do_peek8(a, b);
+                                DeRefx(*(object_ptr)pc[2]);
+                                *(object_ptr)pc[2] = top;
+*****
+
+***** be_execute.c
+                                top = do_peek4(a, b);
+                                DeRefx(*(object_ptr)pc[2])
+                                *(object_ptr)pc[2] = top;
+***** ..\SOURCE-BEFORE\BE_EXECUTE.C
+                                top = do_peek4(a, b);
+                                DeRefx(*(object_ptr)pc[2]);
+                                *(object_ptr)pc[2] = top;
+*****
+
+***** be_execute.c
+                                top = do_peek2(a, b);
+                                DeRefx(*(object_ptr)pc[2])
+                                *(object_ptr)pc[2] = top;
+***** ..\SOURCE-BEFORE\BE_EXECUTE.C
+                                top = do_peek2(a, b);
+                                DeRefx(*(object_ptr)pc[2]);
+                                *(object_ptr)pc[2] = top;
+*****
+
+***** be_execute.c
+                                top = NewString(poke_addr);
+                                DeRefx(*(object_ptr)pc[2])
+                                *(object_ptr)pc[2] = top;
+***** ..\SOURCE-BEFORE\BE_EXECUTE.C
+                                top = NewString(poke_addr);
+                                DeRefx(*(object_ptr)pc[2]);
+                                *(object_ptr)pc[2] = top;
+*****
+
+***** be_execute.c
+                                *(object_ptr)pc[2] = eu_sizeof( a );
+                                DeRef( top )
+                                inc3pc();
+***** ..\SOURCE-BEFORE\BE_EXECUTE.C
+                                *(object_ptr)pc[2] = eu_sizeof( a );
+                                DeRef( top );
+                                inc3pc();
+*****
+
+***** be_execute.c
+                                        }
+                                        DeRef(*(object_ptr)pc[2])
+                                        *(object_ptr)pc[2] = (object)MAKE_SEQ(s1);
+***** ..\SOURCE-BEFORE\BE_EXECUTE.C
+                                        }
+                                        DeRef(*(object_ptr)pc[2]);
+                                        *(object_ptr)pc[2] = (object)MAKE_SEQ(s1);
+*****
+
+***** be_execute.c
+
+                                DeRefx(*(object_ptr)pc[2])
+
+***** ..\SOURCE-BEFORE\BE_EXECUTE.C
+
+                                DeRefx(*(object_ptr)pc[2]);
+
+*****
+
+***** be_execute.c
+                                top = system_exec_call(*(object_ptr)pc[1], *(object_ptr)pc[2]);
+                                DeRef(*(object_ptr)pc[3])
+                                *(object_ptr)pc[3] = top;
+***** ..\SOURCE-BEFORE\BE_EXECUTE.C
+                                top = system_exec_call(*(object_ptr)pc[1], *(object_ptr)pc[2]);
+                                DeRef(*(object_ptr)pc[3]);
+                                *(object_ptr)pc[3] = top;
+*****
+
+***** be_execute.c
+                                                        *(object_ptr)pc[3]);
+                                DeRef(*(object_ptr)pc[4])
+                                *(object_ptr)pc[4] = top;
+***** ..\SOURCE-BEFORE\BE_EXECUTE.C
+                                                        *(object_ptr)pc[3]);
+                                DeRef(*(object_ptr)pc[4]);
+                                *(object_ptr)pc[4] = top;
+*****
+
+***** be_execute.c
+#endif
+                                DeRefx(*(object_ptr)pc[2])
+                                *(object_ptr)pc[2] = b;    //top;
+***** ..\SOURCE-BEFORE\BE_EXECUTE.C
+#endif
+                                DeRefx(*(object_ptr)pc[2]);
+                                *(object_ptr)pc[2] = b;    //top;
+*****
+
+***** be_execute.c
+                                top = EGets(*(object_ptr)pc[1]);
+                                DeRef(*(object_ptr)pc[2])
+                                *(object_ptr)pc[2] = top;
+***** ..\SOURCE-BEFORE\BE_EXECUTE.C
+                                top = EGets(*(object_ptr)pc[1]);
+                                DeRef(*(object_ptr)pc[2]);
+                                *(object_ptr)pc[2] = top;
+*****
+
+***** be_execute.c
+                        deprintf("case L_PLATFORM:");
+                                DeRef(*(object_ptr)pc[1])
+                                top = 1;  // Unknown platform
+***** ..\SOURCE-BEFORE\BE_EXECUTE.C
+                        deprintf("case L_PLATFORM:");
+                                DeRef(*(object_ptr)pc[1]);
+                                top = 1;  // Unknown platform
+*****
+
+***** be_execute.c
+                                }
+                                DeRef(*(object_ptr)pc[1])
+                                *(object_ptr)pc[1] = top;
+***** ..\SOURCE-BEFORE\BE_EXECUTE.C
+                                }
+                                DeRef(*(object_ptr)pc[1]);
+                                *(object_ptr)pc[1] = top;
+*****
+
+***** be_execute.c
+                                top = EPrintf(DOING_SPRINTF, *(object_ptr)pc[1], *(object_ptr)pc[2]);
+                                DeRef(*(object_ptr)pc[3])
+                                *(object_ptr)pc[3] = top;
+***** ..\SOURCE-BEFORE\BE_EXECUTE.C
+                                top = EPrintf(DOING_SPRINTF, *(object_ptr)pc[1], *(object_ptr)pc[2]);
+                                DeRef(*(object_ptr)pc[3]);
+                                *(object_ptr)pc[3] = top;
+*****
+
+***** be_execute.c
+                                top = Command_Line();
+                                DeRef(*(object_ptr)pc[1])
+                                *(object_ptr)pc[1] = top;
+***** ..\SOURCE-BEFORE\BE_EXECUTE.C
+                                top = Command_Line();
+                                DeRef(*(object_ptr)pc[1]);
+                                *(object_ptr)pc[1] = top;
+*****
+
+***** be_execute.c
+                                top = EGetEnv( *(object_ptr)pc[1] );
+                                DeRef(*(object_ptr)pc[2])
+                                *(object_ptr)pc[2] = top;
+***** ..\SOURCE-BEFORE\BE_EXECUTE.C
+                                top = EGetEnv( *(object_ptr)pc[1] );
+                                DeRef(*(object_ptr)pc[2]);
+                                *(object_ptr)pc[2] = top;
+*****
+
+***** be_execute.c
+                                                          *(object_ptr)pc[2]);
+                                DeRef(*(object_ptr)pc[3])
+                                *(object_ptr)pc[3] = top;
+***** ..\SOURCE-BEFORE\BE_EXECUTE.C
+                                                          *(object_ptr)pc[2]);
+                                DeRef(*(object_ptr)pc[3]);
+                                *(object_ptr)pc[3] = top;
+*****
+
+***** be_execute.c
+                                restore_privates((symtab_ptr)pc[3]);
+                                DeRef(*(object_ptr)pc[4])
+                                *(object_ptr)pc[4] = top;
+***** ..\SOURCE-BEFORE\BE_EXECUTE.C
+                                restore_privates((symtab_ptr)pc[3]);
+                                DeRef(*(object_ptr)pc[4]);
+                                *(object_ptr)pc[4] = top;
+*****
+
+***** be_execute.c
+                                a = pc[3];
+                                DeRef(*(object_ptr)a)
+                                *(object_ptr)a = top;
+***** ..\SOURCE-BEFORE\BE_EXECUTE.C
+                                a = pc[3];
+                                DeRef(*(object_ptr)a);
+                                *(object_ptr)a = top;
+*****
+
+***** be_execute.c
+                                top = (object)pc[1];
+                                DeRef(*(object_ptr)top)
+                                *(object_ptr)top = NewDouble(tcb[current_task].tid);
+***** ..\SOURCE-BEFORE\BE_EXECUTE.C
+                                top = (object)pc[1];
+                                DeRef(*(object_ptr)top);
+                                *(object_ptr)top = NewDouble(tcb[current_task].tid);
+*****
+
+***** be_execute.c
+                                a = pc[1];
+                                DeRef(*(object_ptr)a)
+                                *(object_ptr)a = top;
+***** ..\SOURCE-BEFORE\BE_EXECUTE.C
+                                a = pc[1];
+                                DeRef(*(object_ptr)a);
+                                *(object_ptr)a = top;
+*****
+
+***** be_execute.c
+                                a = pc[2];
+                                DeRef(*(object_ptr)a)
+                                *(object_ptr)a = top;
+***** ..\SOURCE-BEFORE\BE_EXECUTE.C
+                                a = pc[2];
+                                DeRef(*(object_ptr)a);
+                                *(object_ptr)a = top;
+*****
+
+***** be_execute.c
+                                while( (sym = sym->next_in_block) ){
+                                                DeRef(sym->obj)
+                                }
+***** ..\SOURCE-BEFORE\BE_EXECUTE.C
+                                while( (sym = sym->next_in_block) ){
+                                                DeRef(sym->obj);
+                                }
+*****
+
+***** be_execute.c
+                                        top = MAKE_INT(a);
+                                        DeRef(*(object_ptr)pc[4])
+                                        *(object_ptr)pc[4] = top;
+***** ..\SOURCE-BEFORE\BE_EXECUTE.C
+                                        top = MAKE_INT(a);
+                                        DeRef(*(object_ptr)pc[4]);
+                                        *(object_ptr)pc[4] = top;
+*****
+
+***** be_execute.c
+                                        top = MAKE_INT(a);
+                                        DeRef(*(object_ptr)pc[4])
+                                        *(object_ptr)pc[4] = top;
+***** ..\SOURCE-BEFORE\BE_EXECUTE.C
+                                        top = MAKE_INT(a);
+                                        DeRef(*(object_ptr)pc[4]);
+                                        *(object_ptr)pc[4] = top;
+*****
+
+Comparing files be_inline.c and ..\SOURCE-BEFORE\BE_INLINE.C
+FC: no differences encountered
+
+Comparing files be_machine.c and ..\SOURCE-BEFORE\BE_MACHINE.C
+***** be_machine.c
+                routine_ptr = SEQ_PTR(routine_name);
+                Ref(routine_name)
+                if (routine_ptr->length >= TEMP_SIZE)
+***** ..\SOURCE-BEFORE\BE_MACHINE.C
+                routine_ptr = SEQ_PTR(routine_name);
+                Ref(routine_name);
+                if (routine_ptr->length >= TEMP_SIZE)
+*****
+
+Comparing files be_main.c and ..\SOURCE-BEFORE\BE_MAIN.C
+FC: no differences encountered
+
+Comparing files be_pcre.c and ..\SOURCE-BEFORE\BE_PCRE.C
+***** be_pcre.c
+                        if ( (errmsg = rcp->errmsg) ) {
+                                DeRefDS(errmsg)
+                                rcp->errmsg = 0;
+***** ..\SOURCE-BEFORE\BE_PCRE.C
+                        if ( (errmsg = rcp->errmsg) ) {
+                                DeRefDS(errmsg);
+                                rcp->errmsg = 0;
+*****
+
+Comparing files be_rterror.c and ..\SOURCE-BEFORE\BE_RTERROR.C
+FC: no differences encountered
+
+Comparing files be_runtime.c and ..\SOURCE-BEFORE\BE_RUNTIME.C
+***** be_runtime.c
+        }
+        DeRefDS( MAKE_SEQ( seq ) )
+        return new_seq;
+***** ..\SOURCE-BEFORE\BE_RUNTIME.C
+        }
+        DeRefDS( MAKE_SEQ( seq ) );
+        return new_seq;
+*****
+
+***** be_runtime.c
+                for (op = (s1->base+reqlen), se = s1->base + s1->length + 1; op < se; op++)
+                        DeRef(*op)
+
+***** ..\SOURCE-BEFORE\BE_RUNTIME.C
+                for (op = (s1->base+reqlen), se = s1->base + s1->length + 1; op < se; op++)
+                        DeRef(*op);
+
+*****
+
+***** be_runtime.c
+                        *(s2->base+i) = temp;
+                        Ref(temp)
+                }
+***** ..\SOURCE-BEFORE\BE_RUNTIME.C
+                        *(s2->base+i) = temp;
+                        Ref(temp);
+                }
+*****
+
+***** be_runtime.c
+                for (ss = op = (s1->base + 1), se = s1->base + start; op < se; op++)
+                        DeRef(*op)
+                // Now copy the 'tail' elements to the start of the existing sequence.
+***** ..\SOURCE-BEFORE\BE_RUNTIME.C
+                for (ss = op = (s1->base + 1), se = s1->base + start; op < se; op++)
+                        DeRef(*op);
+                // Now copy the 'tail' elements to the start of the existing sequence.
+*****
+
+***** be_runtime.c
+                        break;
+                        Ref(temp)
+                }
+***** ..\SOURCE-BEFORE\BE_RUNTIME.C
+                        break;
+                        Ref(temp);
+                }
+*****
+
+***** be_runtime.c
+                for (i=start;i<=stop;i++)
+                        DeRef( s1->base[i] )
+
+***** ..\SOURCE-BEFORE\BE_RUNTIME.C
+                for (i=start;i<=stop;i++)
+                        DeRef( s1->base[i] );
+
+*****
+
+***** be_runtime.c
+                        *(++trg) = temp;
+                        Ref(temp)
+                }
+***** ..\SOURCE-BEFORE\BE_RUNTIME.C
+                        *(++trg) = temp;
+                        Ref(temp);
+                }
+*****
+
+***** be_runtime.c
+        if (UNIQUE(s1) && *target == (object)(*assign_slice_seq))
+                {DeRef(*(s1->base+place))}
+        else {
+***** ..\SOURCE-BEFORE\BE_RUNTIME.C
+        if (UNIQUE(s1) && *target == (object)(*assign_slice_seq))
+                {DeRef(*(s1->base+place));}
+        else {
+*****
+
+***** be_runtime.c
+                *(c->base+1) = a_obj;
+                Ref(a_obj)
+                *(c->base+2) = b_obj;
+                Ref(b_obj)
+        }
+***** ..\SOURCE-BEFORE\BE_RUNTIME.C
+                *(c->base+1) = a_obj;
+                Ref(a_obj);
+                *(c->base+2) = b_obj;
+                Ref(b_obj);
+        }
+*****
+
+***** be_runtime.c
+                                        *p++ = temp;
+                                        Ref(temp)
+                                }
+***** ..\SOURCE-BEFORE\BE_RUNTIME.C
+                                        *p++ = temp;
+                                        Ref(temp);
+                                }
+*****
+
+***** be_runtime.c
+                                if (nb > 0) {
+                                        Ref(*q)
+                                        Append(target, a_obj, *q);
+***** ..\SOURCE-BEFORE\BE_RUNTIME.C
+                                if (nb > 0) {
+                                        Ref(*q);
+                                        Append(target, a_obj, *q);
+*****
+
+***** be_runtime.c
+                        *p++ = s_obj;
+                        Ref(s_obj)
+                }
+***** ..\SOURCE-BEFORE\BE_RUNTIME.C
+                        *p++ = s_obj;
+                        Ref(s_obj);
+                }
+*****
+
+***** be_runtime.c
+                        *p++ = s_obj;
+                        Ref(s_obj)
+                }
+***** ..\SOURCE-BEFORE\BE_RUNTIME.C
+                        *p++ = s_obj;
+                        Ref(s_obj);
+                }
+*****
+
+***** be_runtime.c
+        else{
+                DeRefDS( o )
+        }
+***** ..\SOURCE-BEFORE\BE_RUNTIME.C
+        else{
+                DeRefDS( o );
+        }
+*****
+
+***** be_runtime.c
+{
+        DeRef(a)
+}
+***** ..\SOURCE-BEFORE\BE_RUNTIME.C
+{
+        DeRef(a);
+}
+*****
+
+***** be_runtime.c
+{
+        DeRef(a)
+        DeRef(b)
+        DeRef(c)
+        DeRef(d)
+        DeRef(e)
+}
+***** ..\SOURCE-BEFORE\BE_RUNTIME.C
+{
+        DeRef(a);
+        DeRef(b);
+        DeRef(c);
+        DeRef(d);
+        DeRef(e);
+}
+*****
+
+***** be_runtime.c
+                        }
+                        DeRef(lTemp)
+                }
+***** ..\SOURCE-BEFORE\BE_RUNTIME.C
+                        }
+                        DeRef(lTemp);
+                }
+*****
+
+***** be_runtime.c
+                }
+                DeRef(lTemp)
+        }
+***** ..\SOURCE-BEFORE\BE_RUNTIME.C
+                }
+                DeRef(lTemp);
+        }
+*****
+
+***** be_runtime.c
+                                }
+                                DeRef(lTemp)
+                        }
+***** ..\SOURCE-BEFORE\BE_RUNTIME.C
+                                }
+                                DeRef(lTemp);
+                        }
+*****
+
+***** be_runtime.c
+                for (; p <= olda->base; p++)
+                        DeRef(*p)
+
+***** ..\SOURCE-BEFORE\BE_RUNTIME.C
+                for (; p <= olda->base; p++)
+                        DeRef(*p);
+
+*****
+
+***** be_runtime.c
+                         p++)
+                        DeRef(*p)
+
+***** ..\SOURCE-BEFORE\BE_RUNTIME.C
+                         p++)
+                        DeRef(*p);
+
+*****
+
+***** be_runtime.c
+                while (--length >= 0) {
+                        DeRef(*s_elem)
+                        *s_elem++ = (object)val;
+***** ..\SOURCE-BEFORE\BE_RUNTIME.C
+                while (--length >= 0) {
+                        DeRef(*s_elem);
+                        *s_elem++ = (object)val;
+*****
+
+***** be_runtime.c
+                        }
+                        DeRef(*s_elem)
+                        *s_elem++ = *v_elem++;
+***** ..\SOURCE-BEFORE\BE_RUNTIME.C
+                        }
+                        DeRef(*s_elem);
+                        *s_elem++ = *v_elem++;
+*****
+
+***** be_runtime.c
+        if (num_args >= 1) {
+          DeRef(call_back_arg1->obj)
+          call_back_arg1->obj = make_satom(arg1);
+***** ..\SOURCE-BEFORE\BE_RUNTIME.C
+        if (num_args >= 1) {
+          DeRef(call_back_arg1->obj);
+          call_back_arg1->obj = make_satom(arg1);
+*****
+
+***** be_runtime.c
+          if (num_args >= 2) {
+                DeRef(call_back_arg2->obj)
+                call_back_arg2->obj = make_atom((uintptr_t)arg2);
+***** ..\SOURCE-BEFORE\BE_RUNTIME.C
+          if (num_args >= 2) {
+                DeRef(call_back_arg2->obj);
+                call_back_arg2->obj = make_atom((uintptr_t)arg2);
+*****
+
+***** be_runtime.c
+                if (num_args >= 3) {
+                  DeRef(call_back_arg3->obj)
+                  call_back_arg3->obj = make_atom((uintptr_t)arg3);
+***** ..\SOURCE-BEFORE\BE_RUNTIME.C
+                if (num_args >= 3) {
+                  DeRef(call_back_arg3->obj);
+                  call_back_arg3->obj = make_atom((uintptr_t)arg3);
+*****
+
+***** be_runtime.c
+                  if (num_args >= 4) {
+                        DeRef(call_back_arg4->obj)
+                        call_back_arg4->obj = make_atom((uintptr_t)arg4);
+***** ..\SOURCE-BEFORE\BE_RUNTIME.C
+                  if (num_args >= 4) {
+                        DeRef(call_back_arg4->obj);
+                        call_back_arg4->obj = make_atom((uintptr_t)arg4);
+*****
+
+***** be_runtime.c
+                        if (num_args >= 5) {
+                          DeRef(call_back_arg5->obj)
+                          call_back_arg5->obj = make_atom((uintptr_t)arg5);
+***** ..\SOURCE-BEFORE\BE_RUNTIME.C
+                        if (num_args >= 5) {
+                          DeRef(call_back_arg5->obj);
+                          call_back_arg5->obj = make_atom((uintptr_t)arg5);
+*****
+
+***** be_runtime.c
+                          if (num_args >= 6) {
+                                DeRef(call_back_arg6->obj)
+                                call_back_arg6->obj = make_atom((uintptr_t)arg6);
+***** ..\SOURCE-BEFORE\BE_RUNTIME.C
+                          if (num_args >= 6) {
+                                DeRef(call_back_arg6->obj);
+                                call_back_arg6->obj = make_atom((uintptr_t)arg6);
+*****
+
+***** be_runtime.c
+                                if (num_args >= 7) {
+                                  DeRef(call_back_arg7->obj)
+                                  call_back_arg7->obj = make_atom((uintptr_t)arg7);
+***** ..\SOURCE-BEFORE\BE_RUNTIME.C
+                                if (num_args >= 7) {
+                                  DeRef(call_back_arg7->obj);
+                                  call_back_arg7->obj = make_atom((uintptr_t)arg7);
+*****
+
+***** be_runtime.c
+                                  if (num_args >= 8) {
+                                        DeRef(call_back_arg8->obj)
+                                        call_back_arg8->obj = make_atom((uintptr_t)arg8);
+***** ..\SOURCE-BEFORE\BE_RUNTIME.C
+                                  if (num_args >= 8) {
+                                        DeRef(call_back_arg8->obj);
+                                        call_back_arg8->obj = make_atom((uintptr_t)arg8);
+*****
+
+***** be_runtime.c
+                                        if (num_args >= 9) {
+                                          DeRef(call_back_arg9->obj)
+                                          call_back_arg9->obj = make_atom((uintptr_t)arg9);
+***** ..\SOURCE-BEFORE\BE_RUNTIME.C
+                                        if (num_args >= 9) {
+                                          DeRef(call_back_arg9->obj);
+                                          call_back_arg9->obj = make_atom((uintptr_t)arg9);
+*****
+
+***** be_runtime.c
+                        if( sym->mode == M_NORMAL ){
+                                DeRef( sym->obj )
+                                sym->obj = NOVALUE;
+***** ..\SOURCE-BEFORE\BE_RUNTIME.C
+                        if( sym->mode == M_NORMAL ){
+                                DeRef( sym->obj );
+                                sym->obj = NOVALUE;
+*****
+
+***** be_runtime.c
+                                if( sym->mode == M_CONSTANT ){
+                                        DeRef( sym->obj )
+                                        sym->obj = NOVALUE;
+***** ..\SOURCE-BEFORE\BE_RUNTIME.C
+                                if( sym->mode == M_CONSTANT ){
+                                        DeRef( sym->obj );
+                                        sym->obj = NOVALUE;
+*****
+
+***** be_runtime.c
+                if (end_pos == seqlen) { // all
+                        Ref(copy_from)
+                        if( IS_SEQUENCE( copy_from ) ){
+***** ..\SOURCE-BEFORE\BE_RUNTIME.C
+                if (end_pos == seqlen) { // all
+                        Ref(copy_from);
+                        if( IS_SEQUENCE( copy_from ) ){
+*****
+
+***** be_runtime.c
+                                *rb->target = copy_from;
+                                DeRef(target)
+                        }
+***** ..\SOURCE-BEFORE\BE_RUNTIME.C
+                                *rb->target = copy_from;
+                                DeRef(target);
+                        }
+*****
+
+***** be_runtime.c
+                                        *rb->target = MAKE_SEQ( s1 );
+                                        DeRef( target )
+                                }
+***** ..\SOURCE-BEFORE\BE_RUNTIME.C
+                                        *rb->target = MAKE_SEQ( s1 );
+                                        DeRef( target );
+                                }
+*****
+
+***** be_runtime.c
+                                if( target != NOVALUE ){
+                                        DeRef(target)
+                                }
+***** ..\SOURCE-BEFORE\BE_RUNTIME.C
+                                if( target != NOVALUE ){
+                                        DeRef(target);
+                                }
+*****
+
+***** be_runtime.c
+                        if( target != NOVALUE ){
+                                DeRef(target)
+                        }
+***** ..\SOURCE-BEFORE\BE_RUNTIME.C
+                        if( target != NOVALUE ){
+                                DeRef(target);
+                        }
+*****
+
+***** be_runtime.c
+                                if( target != NOVALUE ){
+                                        DeRef(target)
+                                }
+***** ..\SOURCE-BEFORE\BE_RUNTIME.C
+                                if( target != NOVALUE ){
+                                        DeRef(target);
+                                }
+*****
+
+***** be_runtime.c
+                                        *rb->target = Remove_elements( start_pos + replace_len, end_pos, 0 );
+                                        DeRef( target )
+                                }
+***** ..\SOURCE-BEFORE\BE_RUNTIME.C
+                                        *rb->target = Remove_elements( start_pos + replace_len, end_pos, 0 );
+                                        DeRef( target );
+                                }
+*****
+
+***** be_runtime.c
+                                if( !replace_elements ){
+                                        DeRef( target )
+                                }
+***** ..\SOURCE-BEFORE\BE_RUNTIME.C
+                                if( !replace_elements ){
+                                        DeRef( target );
+                                }
+*****
+
+***** be_runtime.c
+                                else if( !UNIQUE( SEQ_PTR( target ) ) ){
+                                        DeRef( target )
+                                        replace_elements = 0;
+***** ..\SOURCE-BEFORE\BE_RUNTIME.C
+                                else if( !UNIQUE( SEQ_PTR( target ) ) ){
+                                        DeRef( target );
+                                        replace_elements = 0;
+*****
+
+***** be_runtime.c
+                        if( c ){
+                                DeRefDS(copy_to)
+                        }
+***** ..\SOURCE-BEFORE\BE_RUNTIME.C
+                        if( c ){
+                                DeRefDS(copy_to);
+                        }
+*****
+
+***** be_runtime.c
+                assign_slice_seq = &s1;
+                Ref( copy_from )
+                if (start_pos < end_pos) {
+***** ..\SOURCE-BEFORE\BE_RUNTIME.C
+                assign_slice_seq = &s1;
+                Ref( copy_from );
+                if (start_pos < end_pos) {
+*****
+
+***** be_runtime.c
+                                *rb->target = Remove_elements( start_pos + 1, end_pos, 0);
+                                DeRef( target )
+                        }
+***** ..\SOURCE-BEFORE\BE_RUNTIME.C
+                                *rb->target = Remove_elements( start_pos + 1, end_pos, 0);
+                                DeRef( target );
+                        }
+*****
+
+***** be_runtime.c
+                        optr = SEQ_PTR( *rb->target )->base+start_pos;
+                        DeRef(*optr)
+                        *optr = copy_from;
+***** ..\SOURCE-BEFORE\BE_RUNTIME.C
+                        optr = SEQ_PTR( *rb->target )->base+start_pos;
+                        DeRef(*optr);
+                        *optr = copy_from;
+*****
+
+Comparing files be_socket.c and ..\SOURCE-BEFORE\BE_SOCKET.C
+FC: no differences encountered
+
+Comparing files be_symtab.c and ..\SOURCE-BEFORE\BE_SYMTAB.C
+FC: no differences encountered
+
+Comparing files be_syncolor.c and ..\SOURCE-BEFORE\BE_SYNCOLOR.C
+FC: no differences encountered
+
+Comparing files be_task.c and ..\SOURCE-BEFORE\BE_TASK.C
+***** be_task.c
+                // Ref each argument
+                Ref(*(base_ptr+i))
+        }
+***** ..\SOURCE-BEFORE\BE_TASK.C
+                // Ref each argument
+                Ref(*(base_ptr+i));
+        }
+*****
+
+***** be_task.c
+                }
+                DeRef(tcb[recycle].args)
+                new_entry = &tcb[recycle];
+***** ..\SOURCE-BEFORE\BE_TASK.C
+                }
+                DeRef(tcb[recycle].args);
+                new_entry = &tcb[recycle];
+*****
+
+***** be_task.c
+        new_entry->args = args;
+        Ref(args)
+        
+***** ..\SOURCE-BEFORE\BE_TASK.C
+        new_entry->args = args;
+        Ref(args);
+        
+*****
+
+***** be_task.c
+                // found a ST_DEAD task
+                DeRef(tcb[recycle].args)
+                new_entry = &tcb[recycle];
+***** ..\SOURCE-BEFORE\BE_TASK.C
+                // found a ST_DEAD task
+                DeRef(tcb[recycle].args);
+                new_entry = &tcb[recycle];
+*****
+
+***** be_task.c
+        new_entry->args = args;
+        Ref(args)
+        
+***** ..\SOURCE-BEFORE\BE_TASK.C
+        new_entry->args = args;
+        Ref(args);
+        
+*****
+
+Comparing files be_w.c and ..\SOURCE-BEFORE\BE_W.C
+FC: no differences encountered
+
+Comparing files echoversion.c and ..\SOURCE-BEFORE\ECHOVERSION.C
+FC: no differences encountered
+
+Comparing files mkver.c and ..\SOURCE-BEFORE\MKVER.C
+FC: no differences encountered
+
+Comparing files rbt.c and ..\SOURCE-BEFORE\RBT.C
+FC: no differences encountered
+
+Comparing files return15.c and ..\SOURCE-BEFORE\RETURN15.C
+FC: no differences encountered
+
+Comparing files test818.c and ..\SOURCE-BEFORE\TEST818.C
+FC: no differences encountered
+

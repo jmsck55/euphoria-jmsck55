@@ -253,18 +253,18 @@ export enum
 	MIN,
 	MAX
 
-constant
+export constant
 	max_int32 = #3FFFFFFF
 
 ifdef not EU4_0 then
 	atom ptr = machine_func( 16, 8 )
-		poke( ptr, { 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0x3f } )
-		constant
+	poke( ptr, { 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0x3f } )
+	export constant
 			max_int64 = peek8s( ptr )
-		machine_proc( 17, ptr )
-elsedef
-	constant
-		max_int64 = max_int32
+	machine_proc( 17, ptr )
+elsedef    
+	export constant
+		max_int64 = 0x3fffffffffffffff
 end ifdef
 
 ifdef BITS64 then
@@ -465,6 +465,7 @@ export constant -- maskable warning flags
 constant default_maskable_warnings =
 	resolution_warning_flag + 
 	override_warning_flag + 
+	builtin_chosen_warning_flag +
 	translator_warning_flag + 
 	cmdline_warning_flag + 
 	not_reached_warning_flag +
@@ -558,9 +559,17 @@ export constant
 	SOP_PROFILE_STATEMENT = #04, -- statement profile
 	SOP_PROFILE_TIME = #02       -- time profile
 
+export type op_code_or_negative_one(object x)
+	return integer(x) and (x=-1 or (1 <= x and x <= MAX_OPCODE))
+end type
 
-export integer previous_op  -- the previous opcode emitted
-
+export op_code_or_negative_one previous_op  -- The previous opcode emitted should be -1 for
+                                            -- undefined or unknown, or between one and
+                                            -- length(reswords).  When the variable Code is
+                                            -- manipulated in a way that changes what the last
+                                            -- operation in Code, previous_op should be set to
+                                            -- as -1.
+                                            
 export integer max_stack_per_call = 1 -- max stack required per (recursive) call
 export integer sample_size = 0        -- profile_time sample size
 

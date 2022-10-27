@@ -1,16 +1,16 @@
 
 #include <stdint.h>
-#if defined(EWINDOWS) && INTPTR_MAX == INT64_MAX
+#if defined(_WIN32) && INTPTR_MAX == INT64_MAX
 // MSVCRT doesn't handle long double output correctly
 #define __USE_MINGW_ANSI_STDIO 1
 #endif
 #include <stdio.h>
 #include <stdlib.h>
 
-#ifdef EWINDOWS
+#ifdef _WIN32
 #  include <windows.h>
 #endif
-#if defined(EWINDOWS)
+#if defined(_WIN32)
 #  include "pcre/config.h" /* cannot make it link w/o it */
 #endif
 #ifdef EMINGW
@@ -33,7 +33,7 @@ void pcre_deref(object re) {
 		rcp = (pcre_cleanup_ptr)(DBL_PTR(re)->cleanup);
 		if (rcp != 0) {
 			if ( (errmsg = rcp->errmsg) ) {
-				DeRefDS(errmsg) 
+				DeRefDS(errmsg)
 				rcp->errmsg = 0;
 			}
 		}
@@ -328,12 +328,13 @@ int replace_pcre(const char *rep, const char *Src, int len, int *ovector, int cn
 				 char **Dest, int *Dlen)
 {
     int dlen = 0;
-    char *dest = 0;
+    char *dest = (char *) EMalloc(1);
     char Ch;
     int n, st;
     int flag = 0;
 	
-    *Dest = 0;
+    *Dest = dest;
+    *dest = '\0';
     *Dlen = 0;
 	add(&dlen, &dest, Src, ovector[0], &flag);
     while (*rep) {
@@ -586,7 +587,7 @@ object find_replace_pcre(object x )
 		str = EMalloc(out_len + 2);
 		copy_string(str, out, out_len + 1);
 		
-		start_from = ovector[rc] + rep_s->length;
+		start_from = ovector[0] + rep_s->length;
 		limit -= 1;
 	}
 	

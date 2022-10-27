@@ -11,12 +11,14 @@ end ifdef
 
 include std/io.e
 include std/text.e
+include std/filesys.e
 
 include global.e
 include reswords.e
 include msgtext.e
 include coverage.e
 include scanner.e
+include std/error.e
 
 ifdef CRASH_ON_ERROR then
 	include std/console.e
@@ -260,7 +262,7 @@ export procedure CompileErr(object msg, object args = {}, integer preproc = 0 )
 	if integer(msg) then
 		msg = GetMsgText(msg)
 	end if
-
+	
 	msg = format(msg, args)
 
 	Errors += 1
@@ -321,7 +323,7 @@ export procedure InternalErr(integer  msgno, object args = {})
 	if TRANSLATE then
 		screen_output(STDERR, GetMsgText(INTERNAL_ERRORT1, 1, {msg}))
 	else
-		screen_output(STDERR, GetMsgText(INTERNAL_ERROR_AT_12T3, 1, {known_files[current_file_no], line_number, msg}))
+		screen_output(STDERR, GetMsgText(INTERNAL_ERROR_AT_12T3, 1, {abbreviate_path(known_files[current_file_no]), line_number, msg}))
 	end if
 
 	if not batch_job and not test_only then

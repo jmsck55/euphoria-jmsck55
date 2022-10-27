@@ -10,7 +10,7 @@
 /* Included files */
 /******************/
 #include <stdint.h>
-#if defined(EWINDOWS) && INTPTR_MAX == INT64_MAX
+#if defined(_WIN32) && INTPTR_MAX == INT64_MAX
 // MSVCRT doesn't handle long double output correctly
 #define __USE_MINGW_ANSI_STDIO 1
 #endif
@@ -19,7 +19,7 @@
 #include <math.h>
 #include <time.h>
 
-#ifdef EWINDOWS
+#ifdef _WIN32
 #include <windows.h> /* for Sleep(), Fibers */
 #endif
 
@@ -39,7 +39,7 @@
 /*********************/
 /* Local definitions */
 /*********************/
-#ifndef EWINDOWS
+#ifndef _WIN32
 
 pthread_mutex_t task_mutex;
 pthread_cond_t  task_condition;
@@ -98,7 +98,7 @@ void InitTask()
 	
 #ifdef ERUNTIME 
 	tcb[0].mode = TRANSLATED_TASK;
-#ifdef EWINDOWS
+#ifdef _WIN32
 	tcb[0].impl.translated.task = ConvertThreadToFiber( 0 );
 #else
 	tcb[0].impl.translated.task = pthread_self();
@@ -178,11 +178,11 @@ void terminate_task(int task)
 double Wait(double t)
 // Wait for a while 
 {   
-#ifdef EWINDOWS
+#ifdef _WIN32
 
 	Sleep( floor(1000.0 * t) );
 	
-#else // EWINDOWS
+#else // _WIN32
 	
 	double t_int, t_frac;
 	int it;
@@ -220,7 +220,7 @@ static void call_task(int rid, object args)
 	
 	for (i = 1; i <= num_args; i++) {
 		// Ref each argument
-		Ref(*(base_ptr+i)) 
+		Ref(*(base_ptr+i))
 	}
 	
 	switch(num_args) {
@@ -722,7 +722,7 @@ object task_create(object r_id, object args)
 		if (tcb[recycle].impl.interpreted.expr_stack != NULL) {
 			EFree((char *)tcb[recycle].impl.interpreted.expr_stack);
 		}
-		DeRef(tcb[recycle].args) 
+		DeRef(tcb[recycle].args)
 		new_entry = &tcb[recycle];
 	}
 	
@@ -743,7 +743,7 @@ object task_create(object r_id, object args)
 	new_entry->mode = INTERPRETED_TASK;
 	
 	new_entry->args = args;
-	Ref(args) 
+	Ref(args)
 	
 	// interpreter sets these things when the task executes for the first time
 	new_entry->impl.interpreted.pc = NULL;
@@ -786,7 +786,7 @@ object task_create(object r_id, object args)
 TASK_HANDLE stale_task = 0;
 
 void release_task( TASK_HANDLE task ){
-	#ifdef EWINDOWS
+	#ifdef _WIN32
 	DeleteFiber( task );
 	#else
 	pthread_cancel( task );
@@ -848,7 +848,7 @@ object ctask_create(object r_id, object args)
 	}
 	else {
 		// found a ST_DEAD task
-		DeRef(tcb[recycle].args) 
+		DeRef(tcb[recycle].args)
 		new_entry = &tcb[recycle];
 		if( new_entry->mode == TRANSLATED_TASK && new_entry->impl.translated.task != 0 ){
 			if( recycle == current_task ){
@@ -878,7 +878,7 @@ object ctask_create(object r_id, object args)
 	new_entry->mode = TRANSLATED_TASK;
 	
 	new_entry->args = args;
-	Ref(args) 
+	Ref(args)
 	
 	// interpreter sets these things when the task executes for the first time
 	new_entry->impl.translated.task = (TASK_HANDLE) NULL;
@@ -977,7 +977,7 @@ void run_task( int tx ){
 
 
 
-#ifdef EWINDOWS
+#ifdef _WIN32
 
 static void run_current_task( int task ){
 	current_task = task;
