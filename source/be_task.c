@@ -220,7 +220,7 @@ static void call_task(int rid, object args)
 	
 	for (i = 1; i <= num_args; i++) {
 		// Ref each argument
-		Ref(*(base_ptr+i));
+		Ref(*(base_ptr+i)) 
 	}
 	
 	switch(num_args) {
@@ -722,7 +722,7 @@ object task_create(object r_id, object args)
 		if (tcb[recycle].impl.interpreted.expr_stack != NULL) {
 			EFree((char *)tcb[recycle].impl.interpreted.expr_stack);
 		}
-		DeRef(tcb[recycle].args);
+		DeRef(tcb[recycle].args) 
 		new_entry = &tcb[recycle];
 	}
 	
@@ -743,7 +743,7 @@ object task_create(object r_id, object args)
 	new_entry->mode = INTERPRETED_TASK;
 	
 	new_entry->args = args;
-	Ref(args);
+	Ref(args) 
 	
 	// interpreter sets these things when the task executes for the first time
 	new_entry->impl.interpreted.pc = NULL;
@@ -848,7 +848,7 @@ object ctask_create(object r_id, object args)
 	}
 	else {
 		// found a ST_DEAD task
-		DeRef(tcb[recycle].args);
+		DeRef(tcb[recycle].args) 
 		new_entry = &tcb[recycle];
 		if( new_entry->mode == TRANSLATED_TASK && new_entry->impl.translated.task != 0 ){
 			if( recycle == current_task ){
@@ -878,7 +878,7 @@ object ctask_create(object r_id, object args)
 	new_entry->mode = TRANSLATED_TASK;
 	
 	new_entry->args = args;
-	Ref(args);
+	Ref(args) 
 	
 	// interpreter sets these things when the task executes for the first time
 	new_entry->impl.translated.task = (TASK_HANDLE) NULL;

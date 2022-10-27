@@ -130,7 +130,7 @@ union pc_t {
 						  thread();                  \
 					  }                              \
 					  else {                         \
-						   DeRefDSx(a);              \
+						   DeRefDSx(a)               \
 					  }
 
 
@@ -176,7 +176,7 @@ union pc_t {
 						  a = *obj_ptr;              \
 						  *obj_ptr = top;            \
 						  pc += 4;                   \
-						  DeRef(a);                  \
+						  DeRef(a)                   \
 					  }
 
 #define END_BIN_OP_IFW(x)  {                          \
@@ -224,13 +224,13 @@ union pc_t {
 							if (IS_ATOM_INT_NV(a))    \
 								thread();         \
 							else                  \
-								DeRefDSx(a);       \
+								DeRefDSx(a)        \
 						}                         \
 						else {                    \
 							tpc = pc;             \
 							*obj_ptr = unary_op(x, top); \
 							inc3pc();              \
-							DeRef(a);             \
+							DeRef(a)              \
 						}
 
 /**********************/
@@ -1479,8 +1479,8 @@ object call_map_new(){
  */
 void call_map_put( object map, object key, object value, object operation ){
 	RefDS( map );
-	Ref( key );
-	Ref( value );
+	Ref( key ) 
+	Ref( value ) 
 	internal_general_call_back( map_put, map, key, value, operation, 23 /* default threshold */, 0, 0, 0, 0 );
 }
 
@@ -1489,8 +1489,8 @@ void call_map_put( object map, object key, object value, object operation ){
  */
 object call_map_get( object map, object key, object default_value ){
 	RefDS( map );
-	Ref( key );
-	Ref( default_value );
+	Ref( key ) 
+	Ref( default_value ) 
 	return internal_general_call_back( map_get, map, key, default_value, 0, 0, 0, 0, 0, 0 );
 }
 
@@ -1551,7 +1551,7 @@ void analyze_switch()
 			if (!IS_ATOM_INT(top) ) {
 				a = DoubleToInt(top);
 				if (IS_ATOM_INT(a)) {
-					DeRefDS(top);
+					DeRefDS(top) 
 					top = a;
 				}
 			}
@@ -1582,7 +1582,7 @@ void analyze_switch()
 
 			new_values->base[i] = fe.st[sym].obj;
 		}
-		Ref( new_values->base[i] );
+		Ref( new_values->base[i] ) 
 		
 		// Use a std;map just like in the front end to check for duplicate case values:
 		check_map = call_map_get( unique_jumps, jump->base[i], empty_sequence );
@@ -1637,13 +1637,13 @@ void analyze_switch()
 			Append( &unique_values_obj, unique_values_obj, new_values->base[i] );
 			unique_values = SEQ_PTR( unique_values_obj );
 		}
-		DeRefDS( check_map );
+		DeRefDS( check_map ) 
 	}
-	DeRefDS( unique_jumps );
-	DeRefDS( empty_sequence );
-	DeRefDS( unique_values_obj );
+	DeRefDS( unique_jumps ) 
+	DeRefDS( empty_sequence ) 
+	DeRefDS( unique_values_obj ) 
 
-	DeRefDS( MAKE_SEQ( values ) );
+	DeRefDS( MAKE_SEQ( values ) ) 
 	if( all_ints &&  max - min < 1024){
 		*tpc = (intptr_t)opcode( SWITCH_SPI );
 
@@ -1657,7 +1657,7 @@ void analyze_switch()
 			lookup->base[new_values->base[i] - offset] = jump->base[i];
 		}
 		tpc[2] = (intptr_t)offset;
-		DeRefDS( *(object_ptr)tpc[3] );
+		DeRefDS( *(object_ptr)tpc[3] ) 
 		*(object_ptr)tpc[3] = (object)MAKE_SEQ( lookup );
 	}
 	else{
@@ -2039,8 +2039,8 @@ void do_exec(intptr_t *start_pc)
 				top = (object)*(top + ((s1_ptr)obj_ptr)->base);
 				a = pc[3];
 
-				Ref( top );
-				DeRef( ((symtab_ptr)a)->obj );
+				Ref( top ) 
+				DeRef( ((symtab_ptr)a)->obj ) 
 
 				*(object_ptr)a = top;
 				pc += 4;
@@ -2121,7 +2121,7 @@ void do_exec(intptr_t *start_pc)
 						BREAK;
 					}
 					else {
-						DeRefDSx(*(object_ptr)a);
+						DeRefDSx(*(object_ptr)a) 
 						*(object_ptr)a = top;
 						thread();
 						BREAK;
@@ -2129,7 +2129,7 @@ void do_exec(intptr_t *start_pc)
 				}
 				else {
 					RefDS(top);
-					DeRefx(*(object_ptr)a);
+					DeRefx(*(object_ptr)a) 
 					*(object_ptr)a = top;
 					thread();
 					BREAK;
@@ -2139,7 +2139,7 @@ void do_exec(intptr_t *start_pc)
 			deprintf("case L_PASSIGN_SUBS:");
 				// temp has pointer to sequence
 				top = *(object_ptr)pc[3];  /* the rhs value */
-				Ref(top); /* do before UNIQUE check - avoids circularity */
+				Ref(top)  /* do before UNIQUE check - avoids circularity */
 				obj_ptr = (object_ptr)SEQ_PTR(**(object_ptr **)pc[1]);
 				if (!UNIQUE(obj_ptr)) {
 					/* make it single-ref */
@@ -2162,7 +2162,7 @@ void do_exec(intptr_t *start_pc)
 
 				/* the var sequence */
 				top = *(object_ptr)pc[3];  /* the rhs value */
-				Ref(top); /* do before UNIQUE check - avoids circularity */
+				Ref(top)  /* do before UNIQUE check - avoids circularity */
 				obj_ptr = (object_ptr)SEQ_PTR(*(object_ptr *)pc[1]);
 				if (!UNIQUE(obj_ptr)) {
 					/* make it single-ref */
@@ -2188,7 +2188,7 @@ void do_exec(intptr_t *start_pc)
 					BREAK;
 				}
 				else {
-					DeRefDSx(a);
+					DeRefDSx(a) 
 					thread();
 					BREAK;
 				}
@@ -2218,7 +2218,7 @@ void do_exec(intptr_t *start_pc)
 					BREAK;
 				}
 				else {
-					DeRefDSx(top);
+					DeRefDSx(top) 
 					thread();
 					BREAK;
 				}
@@ -2295,7 +2295,7 @@ void do_exec(intptr_t *start_pc)
 					tpc = pc;
 					top = binary_op(PLUS, ATOM_1, top);
 				}
-				DeRefx(*(object_ptr)a);
+				DeRefx(*(object_ptr)a) 
 				*(object_ptr)a = top;
 				thread4();
 				BREAK;
@@ -2323,7 +2323,7 @@ void do_exec(intptr_t *start_pc)
 					if (IS_ATOM_DBL(top)) {
 						b = DoubleToInt(top);
 						if (IS_ATOM_INT(b)) {
-							DeRefDS(top);
+							DeRefDS(top) 
 							*(object_ptr)a = b;
 							BREAK;
 						}
@@ -2498,7 +2498,7 @@ void do_exec(intptr_t *start_pc)
 				top = *obj_ptr;
 				*obj_ptr = *(object_ptr)pc[1];
 
-				Ref(*obj_ptr);
+				Ref(*obj_ptr) 
 
 				if (IS_ATOM_INT_NV(top)) {
 					inc3pc();
@@ -2506,7 +2506,7 @@ void do_exec(intptr_t *start_pc)
 					BREAK;
 				}
 				else {
-					DeRefDSx(top);
+					DeRefDSx(top) 
 					inc3pc();
 					thread();
 					BREAK;
@@ -2523,7 +2523,7 @@ void do_exec(intptr_t *start_pc)
 				// copy base sequence into a temp, then use the temp
 				obj_ptr = (object_ptr)pc[4];
 				a = *(object_ptr)pc[1];
-				Ref(a);
+				Ref(a) 
 				*obj_ptr = a;
 				goto ls;
 
@@ -2621,11 +2621,11 @@ void do_exec(intptr_t *start_pc)
 				for (a = 1; a <= nvars; a++) {
 					/* the last one comes first */
 					*obj_ptr = *((object_ptr)pc[0]);
-					Ref(*obj_ptr);
+					Ref(*obj_ptr) 
 					pc++;
 					obj_ptr--;
 				}
-				DeRef(*(object_ptr)pc[0]);
+				DeRef(*(object_ptr)pc[0]) 
 				*(object_ptr)pc[0] = MAKE_SEQ(s1);
 				pc++;
 				thread();
@@ -2638,10 +2638,10 @@ void do_exec(intptr_t *start_pc)
 				obj_ptr = s1->base;
 				/* the second one comes first */
 				obj_ptr[1] = *((object_ptr)pc[2]);
-				Ref(obj_ptr[1]);
+				Ref(obj_ptr[1]) 
 				obj_ptr[2] = *((object_ptr)pc[1]);
-				Ref(obj_ptr[2]);
-				DeRef(*(object_ptr)pc[3]);
+				Ref(obj_ptr[2]) 
+				DeRef(*(object_ptr)pc[3]) 
 				*(object_ptr)pc[3] = MAKE_SEQ(s1);
 				pc += 4;
 				thread();
@@ -2712,7 +2712,7 @@ void do_exec(intptr_t *start_pc)
 					tpc = pc;
 					a = DoubleToInt(top);
 					if (IS_ATOM_INT(a)) {
-						DeRefDS(top);
+						DeRefDS(top) 
 						*(object_ptr)pc[-1] = a;
 						BREAK;
 					}
@@ -2756,7 +2756,7 @@ void do_exec(intptr_t *start_pc)
 				else {
 					top = ATOM_0;
 				}
-				DeRefx(*(object_ptr)pc[2]);
+				DeRefx(*(object_ptr)pc[2]) 
 				*(object_ptr)pc[2] = top;
 				inc3pc();
 				thread();
@@ -2770,10 +2770,10 @@ void do_exec(intptr_t *start_pc)
 				else
 					top = ATOM_0;
 				if( ((symtab_ptr)pc[1])->mode == M_TEMP ){
-					DeRef( ((symtab_ptr)pc[1])->obj );
+					DeRef( ((symtab_ptr)pc[1])->obj ) 
 					((symtab_ptr)pc[1])->obj = NOVALUE;
 				}
-				DeRefx(*(object_ptr)pc[2]);
+				DeRefx(*(object_ptr)pc[2]) 
 				*(object_ptr)pc[2] = top;
 				inc3pc();
 				thread();
@@ -2787,10 +2787,10 @@ void do_exec(intptr_t *start_pc)
 				else
 					top = ATOM_0;
 				if( ((symtab_ptr)pc[1])->mode == M_TEMP ){
-					DeRef( ((symtab_ptr)pc[1])->obj );
+					DeRef( ((symtab_ptr)pc[1])->obj ) 
 					((symtab_ptr)pc[1])->obj = NOVALUE;
 				}
-				DeRefx(*(object_ptr)pc[2]);
+				DeRefx(*(object_ptr)pc[2]) 
 				*(object_ptr)pc[2] = top;
 				inc3pc();
 				BREAK;
@@ -2815,10 +2815,10 @@ void do_exec(intptr_t *start_pc)
 					top = ATOM_0;
 
 				if( ((symtab_ptr)pc[1])->mode == M_TEMP ){
-					DeRef( ((symtab_ptr)pc[1])->obj );
+					DeRef( ((symtab_ptr)pc[1])->obj ) 
 					((symtab_ptr)pc[1])->obj = NOVALUE;
 				}
-				DeRefx(*(object_ptr)pc[2]);
+				DeRefx(*(object_ptr)pc[2]) 
 				*(object_ptr)pc[2] = top;
 				inc3pc();
 				BREAK;
@@ -2839,13 +2839,13 @@ void do_exec(intptr_t *start_pc)
 				}
 				else {
 					if( ((symtab_ptr)pc[1])->mode == M_TEMP ){
-						DeRef( ((symtab_ptr)pc[1])->obj );
+						DeRef( ((symtab_ptr)pc[1])->obj ) 
 						((symtab_ptr)pc[1])->obj = NOVALUE;
 					}
 					top = ATOM_1;
 				}
 				obj_ptr = (object_ptr)pc[2];
-				DeRefx(*obj_ptr);
+				DeRefx(*obj_ptr) 
 				*obj_ptr = top;
 				inc3pc();
 				thread();
@@ -2889,7 +2889,7 @@ void do_exec(intptr_t *start_pc)
 					tpc = pc;
 					top = unary_op(FLOOR, top);
 				}
-				DeRef(*(object_ptr)pc[2]);
+				DeRef(*(object_ptr)pc[2]) 
 				*(object_ptr)pc[2] = top;
 				inc3pc();
 				thread();
@@ -2902,7 +2902,7 @@ void do_exec(intptr_t *start_pc)
 					top = (*optable[a].intfn)(INT_VAL(top));
 				else
 					top = unary_op(a, top);
-				DeRef(*(object_ptr)pc[2]);
+				DeRef(*(object_ptr)pc[2]) 
 				*(object_ptr)pc[2] = top;
 				inc3pc();
 				thread();
@@ -3014,7 +3014,7 @@ void do_exec(intptr_t *start_pc)
 						thread();
 
 					else {
-						DeRefDS(a);
+						DeRefDS(a) 
 					}
 				}
 				BREAK;
@@ -3236,7 +3236,7 @@ void do_exec(intptr_t *start_pc)
 					tpc = pc;
 					top = binary_op(DIVIDE, top, ATOM_2);
 				}
-				DeRefx(*(object_ptr)pc[3]);
+				DeRefx(*(object_ptr)pc[3]) 
 				*(object_ptr)pc[3] = top;
 				thread4();
 				BREAK;
@@ -3252,9 +3252,9 @@ void do_exec(intptr_t *start_pc)
 					tpc = pc;
 					a = binary_op(DIVIDE, top, ATOM_2);
 					top = unary_op(FLOOR, a);
-					DeRef(a);
+					DeRef(a) 
 				}
-				DeRefx(*(object_ptr)pc[3]);
+				DeRefx(*(object_ptr)pc[3]) 
 				*(object_ptr)pc[3] = top;
 				thread4();
 				BREAK;
@@ -3286,9 +3286,9 @@ void do_exec(intptr_t *start_pc)
 					tpc = pc;
 					a = binary_op(DIVIDE, a, top);
 					b = unary_op(FLOOR, a);
-					DeRef(a);
+					DeRef(a) 
 				}
-				DeRef(*(object_ptr)pc[3]);
+				DeRef(*(object_ptr)pc[3]) 
 				*(object_ptr)pc[3] = b;
 				pc += 4;
 				thread();
@@ -3453,7 +3453,7 @@ void do_exec(intptr_t *start_pc)
 				top = *(object_ptr)pc[1];
 				if (IS_ATOM_INT(top)) {
 					if (top == ATOM_0) {
-						DeRefx(*(object_ptr)pc[2]);
+						DeRefx(*(object_ptr)pc[2]) 
 						*(object_ptr)pc[2] = ATOM_0;
 						pc = (intptr_t *)pc[3];
 						thread();
@@ -3462,7 +3462,7 @@ void do_exec(intptr_t *start_pc)
 				}
 				else if (IS_ATOM_DBL(top)) {
 					if (DBL_PTR(top)->dbl == 0.0) {
-						DeRefx(*(object_ptr)pc[2]);
+						DeRefx(*(object_ptr)pc[2]) 
 						*(object_ptr)pc[2] = ATOM_0;
 						pc = (intptr_t *)pc[3];
 						thread();
@@ -3505,7 +3505,7 @@ void do_exec(intptr_t *start_pc)
 			case L_SC2_AND:
 			deprintf("case L_SC2_AND:");
 				top = *(object_ptr)pc[1];
-				DeRefx(*(object_ptr)pc[2]);
+				DeRefx(*(object_ptr)pc[2]) 
 				if (IS_ATOM_INT(top)) {
 					if (top == ATOM_0)
 						*(object_ptr)pc[2] = ATOM_0;
@@ -3551,7 +3551,7 @@ void do_exec(intptr_t *start_pc)
 				top = *(object_ptr)pc[1];
 				if (IS_ATOM_INT(top)) {
 					if (top != ATOM_0) {
-						DeRefx(*(object_ptr)pc[2]);
+						DeRefx(*(object_ptr)pc[2]) 
 						*(object_ptr)pc[2] = ATOM_1;
 						pc = (intptr_t *)pc[3];
 						thread();
@@ -3560,7 +3560,7 @@ void do_exec(intptr_t *start_pc)
 				}
 				else if (IS_ATOM_DBL(top)) {
 					if (DBL_PTR(top)->dbl != 0.0) {
-						DeRefx(*(object_ptr)pc[2]);
+						DeRefx(*(object_ptr)pc[2]) 
 						*(object_ptr)pc[2] = ATOM_1;
 						pc = (intptr_t *)pc[3];
 						thread();
@@ -3610,8 +3610,8 @@ void do_exec(intptr_t *start_pc)
 				top = *obj_ptr;
 				c = *(object_ptr)pc[3]; /* initial value */
 				*obj_ptr = c;
-				Ref(c);
-				DeRefx(top);
+				Ref(c) 
+				DeRefx(top) 
 				top = *(object_ptr)pc[1];    /* inc */
 				a = *(object_ptr)pc[2];      /* limit */
 				if (IS_ATOM_INT(top) &&
@@ -3685,8 +3685,8 @@ void do_exec(intptr_t *start_pc)
 					}
 					else {
 						i = going_up ? ENDFOR_UP : ENDFOR_DOWN;
-						/* Ref(top); inc */
-						/* Ref(a);   limit */
+						/* Ref(top)  inc */
+						/* Ref(a)    limit */
 					}
 				}
 				/* we're going in - patch the ENDFOR opcode */
@@ -3761,11 +3761,11 @@ void do_exec(intptr_t *start_pc)
 				top = binary_op_a(PLUS, a, *(object_ptr)pc[4]); /* increment */
 				/* compare with limit */
 				if (binary_op_a(GREATER, top, *(object_ptr)pc[2]) == ATOM_1) {
-					DeRef(top);
+					DeRef(top) 
 					thread5();
 				}
 				else {
-					DeRef(*obj_ptr);
+					DeRef(*obj_ptr) 
 					*obj_ptr = top;
 					pc = (intptr_t *)pc[1]; /* loop again */
 					thread();
@@ -3780,11 +3780,11 @@ void do_exec(intptr_t *start_pc)
 				tpc = pc;
 				top = binary_op_a(PLUS, a, *(object_ptr)pc[4]); /* increment */
 				if (binary_op_a(LESS, top, *(object_ptr)pc[2]) == ATOM_1) {
-					DeRef(top);
+					DeRef(top) 
 					thread5();  /* exit loop */
 				}
 				else {
-					DeRef(*obj_ptr);
+					DeRef(*obj_ptr) 
 					*obj_ptr = top;
 					pc = (intptr_t *)pc[1]; /* loop again */
 					thread();
@@ -3933,7 +3933,7 @@ void do_exec(intptr_t *start_pc)
 					while ( obj_ptr < (object_ptr)a) {
 						*block++ = sym->obj;
 						sym->obj = *(object_ptr)obj_ptr[0];
-						Ref(sym->obj);
+						Ref(sym->obj) 
 						sym = sym->next;
 						obj_ptr++;
 					}
@@ -3960,7 +3960,7 @@ void do_exec(intptr_t *start_pc)
 					/* just copy the args */
 					while (obj_ptr < (object_ptr)a) {
 						sym->obj = *(object_ptr)obj_ptr[0];
-						Ref(sym->obj);
+						Ref(sym->obj) 
 						sym = sym->next;
 						obj_ptr++;
 					}
@@ -3992,15 +3992,15 @@ void do_exec(intptr_t *start_pc)
 				while (obj_ptr < (object_ptr)a) {
 					b = sym->obj;
 					sym->obj = *(object_ptr)obj_ptr[0];
-					Ref(sym->obj);
-					DeRef( b );
+					Ref(sym->obj) 
+					DeRef( b ) 
 					sym = sym->next;
 					obj_ptr++;
 				}
 
 				/* release the privates and set to NOVALUE */
 				while (sym && sym->scope <= S_PRIVATE) {
-					DeRef(sym->obj);
+					DeRef(sym->obj) 
 					sym->obj = NOVALUE; // not actually needed for params
 					sym = sym->next;
 				}
@@ -4008,7 +4008,7 @@ void do_exec(intptr_t *start_pc)
 				/* release the temps and set to NOVALUE */
 				sym = sub->u.subp.temps;
 				while (sym != NULL) {
-					DeRef(sym->obj);
+					DeRef(sym->obj) 
 					sym->obj = NOVALUE;
 					sym = sym->next;
 				}
@@ -4036,7 +4036,7 @@ void do_exec(intptr_t *start_pc)
 			case L_RETURNF: /* return from function */
 			deprintf("case L_RETURNF:");
 				result_val = *(object_ptr)pc[3]; /* the return value */
-				Ref(result_val);
+				Ref(result_val) 
 
 				// record the place to put the return value
 				result_ptr = (object_ptr)*((intptr_t *)expr_top[-2] - 1);
@@ -4054,7 +4054,7 @@ void do_exec(intptr_t *start_pc)
 				while(1){
 					obj_ptr = (object_ptr)sym;
 					while( (obj_ptr = (object_ptr)((symtab_ptr)obj_ptr)->next_in_block) ){
-						DeRef( *obj_ptr);
+						DeRef( *obj_ptr) 
 						*obj_ptr = NOVALUE;
 					}
 					if( sym == sub->u.subp.block ) break;
@@ -4077,9 +4077,9 @@ void do_exec(intptr_t *start_pc)
 						// store function result
 						top = *result_ptr;
 						*result_ptr = result_val; //was important not to use "a"
-						DeRef(top);
+						DeRef(top) 
 						if( ((symtab_ptr)tpc[3])->mode == M_TEMP ){
-							DeRef( result_val );
+							DeRef( result_val ) 
 
 							// Watch for recursion:
 							if( tpc[3] != (intptr_t)result_ptr )
@@ -4104,7 +4104,7 @@ void do_exec(intptr_t *start_pc)
 				result_ptr = 0;
 				pc += 2;
 				while( (sym = sym->next_in_block) ){
-					DeRef(sym->obj);
+					DeRef(sym->obj) 
 					sym->obj = NOVALUE;
 
 				}
@@ -4116,7 +4116,7 @@ void do_exec(intptr_t *start_pc)
 				a = *(object_ptr)pc[3]; // routine name sequence
 				SymTabLen = pc[2]; // avoid > 3 args
 				b = RoutineId((symtab_ptr)top, a, pc[4]);
-				DeRefx(*(object_ptr)pc[5]);
+				DeRefx(*(object_ptr)pc[5]) 
 				*(object_ptr)pc[5] = b;
 				pc += 6;
 				/*thread();*/
@@ -4171,7 +4171,7 @@ void do_exec(intptr_t *start_pc)
 				}
 				obj_ptr = (object_ptr)pc[3];
 				if( a != *obj_ptr ){
-					DeRef( *obj_ptr );
+					DeRef( *obj_ptr ) 
 					*obj_ptr = a;
 				}
 
@@ -4200,14 +4200,14 @@ void do_exec(intptr_t *start_pc)
 
 			case L_REF_TEMP:
 				deprintf("case L_REF_TEMP:");
-				Ref( ((symtab_ptr)pc[1])->obj );
+				Ref( ((symtab_ptr)pc[1])->obj ) 
 				pc += 2;
 				thread();
 				BREAK;
 
 			case L_DEREF_TEMP:
 				deprintf("case L_DEREF_TEMP:");
-				DeRef( ((symtab_ptr)pc[1])->obj );
+				DeRef( ((symtab_ptr)pc[1])->obj ) 
 
 			case L_NOVALUE_TEMP:
 				deprintf("case L_NOVALUE_TEMP:");
@@ -4226,7 +4226,7 @@ void do_exec(intptr_t *start_pc)
 				}
 	  app_copy:
 				tpc = pc;
-				Ref(top);
+				Ref(top) 
 				Append((object_ptr)pc[3], b, top);
 				thread4();
 				BREAK;
@@ -4241,7 +4241,7 @@ void do_exec(intptr_t *start_pc)
 				}
 	 prep_copy:
 				tpc = pc;
-				Ref(top);
+				Ref(top) 
 				Prepend((object_ptr)pc[3], b, top);
 				thread4();
 				BREAK;
@@ -4270,8 +4270,8 @@ void do_exec(intptr_t *start_pc)
 				// no removal
 				if (nvars > seqlen || nvars > end_pos || end_pos<0) {  // return target
 					*obj_ptr = a;
-					Ref(*obj_ptr);
-					DeRef(top);
+					Ref(*obj_ptr) 
+					DeRef(top) 
 					thread5();
 					BREAK;
 				}
@@ -4279,7 +4279,7 @@ void do_exec(intptr_t *start_pc)
 				if (nvars < 2 ) {
 					if (end_pos >= seqlen) {   // return ""
 						*obj_ptr = MAKE_SEQ(NewS1(0));
-						DeRef(top);
+						DeRef(top) 
 					}
 				   	else
 						Tail(s1,end_pos+1,obj_ptr); //end_pos = 1st element kept
@@ -4344,7 +4344,7 @@ void do_exec(intptr_t *start_pc)
 				}
 				else if (nvars >= seqlen) {
 					// Caller wants it all. So pass another reference to source.
-					Ref(a);
+					Ref(a) 
 					*obj_ptr = a;
 				}
 				else
@@ -4373,12 +4373,12 @@ void do_exec(intptr_t *start_pc)
 				obj_ptr = (object_ptr)pc[3]; // target
 				// get last elements
 				if (nvars == 0) {
-					DeRef(*obj_ptr);
+					DeRef(*obj_ptr) 
 					*obj_ptr = MAKE_SEQ(NewS1(0));
 				}
 				else if (nvars >= seqlen) {
-					DeRef(*obj_ptr);
-					Ref(a);
+					DeRef(*obj_ptr) 
+					Ref(a) 
 					*obj_ptr = a;
 				}
 				else
@@ -4426,7 +4426,7 @@ void do_exec(intptr_t *start_pc)
 					*obj_ptr : (intptr_t)DBL_PTR(*obj_ptr)->dbl;  //insertion point
 
 				b = *(object_ptr)pc[2]; //the stuff to insert
-				Ref(b);
+				Ref(b) 
 
 				obj_ptr = (object_ptr)pc[4]; //-> the target
 
@@ -4444,7 +4444,7 @@ void do_exec(intptr_t *start_pc)
 					s2 = SEQ_PTR(b);
 					if( (*obj_ptr != a) || ( SEQ_PTR( a )->ref != 1 ) ){
 						// not in place: need to deref the target and ref the orig seq
-						if( *obj_ptr != NOVALUE ) DeRef(*obj_ptr);
+						if( *obj_ptr != NOVALUE ) DeRef(*obj_ptr) 
 
 						// ensures that Add_internal_space will make a copy
 						RefDS( a );
@@ -4461,7 +4461,7 @@ void do_exec(intptr_t *start_pc)
 						*obj_ptr = Insert( a, b, nvars );
 					}
 					else{
-						if( *obj_ptr != NOVALUE ) DeRef(*(obj_ptr));
+						if( *obj_ptr != NOVALUE ) DeRef(*(obj_ptr)) 
 						RefDS( a );
 						*obj_ptr = Insert(a,b,nvars);
 					}
@@ -4482,7 +4482,7 @@ void do_exec(intptr_t *start_pc)
 			deprintf("case L_REPEAT:");
 				tpc = pc;
 				top = Repeat(*(object_ptr)pc[1], *(object_ptr)pc[2]);
-				DeRef(*(object_ptr)pc[3]);
+				DeRef(*(object_ptr)pc[3]) 
 				*(object_ptr)pc[3] = top;
 				pc += 4;
 				thread();
@@ -4492,7 +4492,7 @@ void do_exec(intptr_t *start_pc)
 			deprintf("case L_DATE:");
 				tpc = pc;
 				top = Date();
-				DeRef(*(object_ptr)pc[1]);
+				DeRef(*(object_ptr)pc[1]) 
 				*(object_ptr)pc[1] = top;
 				pc += 2;
 				BREAK;
@@ -4501,7 +4501,7 @@ void do_exec(intptr_t *start_pc)
 			deprintf("case L_TIME:");
 				tpc = pc;
 				top = NewDouble(current_time());
-				DeRef(*(object_ptr)pc[1]);
+				DeRef(*(object_ptr)pc[1]) 
 				*(object_ptr)pc[1] = top;
 				pc += 2;
 				thread();
@@ -4512,7 +4512,7 @@ void do_exec(intptr_t *start_pc)
 			case L_SPACE_USED:
 			deprintf("case L_SPACE_USED:");
 				top = MAKE_INT(bytes_allocated);
-				DeRef(*(object_ptr)pc[1]);
+				DeRef(*(object_ptr)pc[1]) 
 				*(object_ptr)pc[1] = top;
 				pc += 2;
 				BREAK;
@@ -4551,7 +4551,7 @@ void do_exec(intptr_t *start_pc)
 					top = (top == ATOM_0);
 				}
 				obj_ptr = (object_ptr)pc[3];
-				DeRefx(*obj_ptr);
+				DeRefx(*obj_ptr) 
 				pc += 4;
 				*obj_ptr = top;
 				thread();
@@ -4569,7 +4569,7 @@ void do_exec(intptr_t *start_pc)
 					top = compare(a, top);
 				}
 				obj_ptr = (object_ptr)pc[3];
-				DeRefx(*obj_ptr);
+				DeRefx(*obj_ptr) 
 				pc += 4;
 				*obj_ptr = top;
 				thread();
@@ -4580,7 +4580,7 @@ void do_exec(intptr_t *start_pc)
 				tpc = pc;
 				a = *(object_ptr)pc[3];
 				*(object_ptr)pc[3] = calc_hash(*(object_ptr)pc[1], *(object_ptr)pc[2]);
-				DeRef( a );
+				DeRef( a ) 
 				pc += 4;
 				thread();
 				BREAK;
@@ -4590,7 +4590,7 @@ void do_exec(intptr_t *start_pc)
 				tpc = pc;
 				a = find(*(object_ptr)pc[1], (s1_ptr)*(object_ptr)pc[2]);
 				top = MAKE_INT(a);
-				DeRef(*(object_ptr)pc[3]);
+				DeRef(*(object_ptr)pc[3]) 
 				*(object_ptr)pc[3] = top;
 				pc += 4;
 				thread();
@@ -4601,7 +4601,7 @@ void do_exec(intptr_t *start_pc)
 				tpc = pc;
 				top = MAKE_INT(e_match((s1_ptr)*(object_ptr)pc[1],
 									 (s1_ptr)*(object_ptr)pc[2]));
-				DeRef(*(object_ptr)pc[3]);
+				DeRef(*(object_ptr)pc[3]) 
 				*(object_ptr)pc[3] = top;
 				pc += 4;
 				thread();
@@ -4622,7 +4622,7 @@ void do_exec(intptr_t *start_pc)
 				a = *(object_ptr)pc[1]; /* the address */
 				tpc = pc;  // in case of machine exception
 				top = do_peek8(a, b);
-				DeRefx(*(object_ptr)pc[2]);
+				DeRefx(*(object_ptr)pc[2]) 
 				*(object_ptr)pc[2] = top;
 				inc3pc();
 				thread();
@@ -4644,7 +4644,7 @@ void do_exec(intptr_t *start_pc)
 				a = *(object_ptr)pc[1]; /* the address */
 				tpc = pc;  // in case of machine exception
 				top = do_peek4(a, b);
-				DeRefx(*(object_ptr)pc[2]);
+				DeRefx(*(object_ptr)pc[2]) 
 				*(object_ptr)pc[2] = top;
 				inc3pc();
 				thread();
@@ -4662,7 +4662,7 @@ void do_exec(intptr_t *start_pc)
 				a = *(object_ptr)pc[1]; /* the address */
 				tpc = pc;  // in case of machine exception
 				top = do_peek2(a, b);
-				DeRefx(*(object_ptr)pc[2]);
+				DeRefx(*(object_ptr)pc[2]) 
 				*(object_ptr)pc[2] = top;
 				inc3pc();
 				thread();
@@ -4688,7 +4688,7 @@ void do_exec(intptr_t *start_pc)
 				  "argument to peek_string() must be an atom");
 				}
 				top = NewString(poke_addr);
-				DeRefx(*(object_ptr)pc[2]);
+				DeRefx(*(object_ptr)pc[2]) 
 				*(object_ptr)pc[2] = top;
 				inc3pc();
 				thread();
@@ -4699,7 +4699,7 @@ void do_exec(intptr_t *start_pc)
 				top = *(object_ptr)pc[2];
 				tpc = pc;  // in case of machine exception
 				*(object_ptr)pc[2] = eu_sizeof( a );
-				DeRef( top );
+				DeRef( top ) 
 				inc3pc();
 				thread();
 				BREAK;
@@ -4746,13 +4746,13 @@ void do_exec(intptr_t *start_pc)
 							*obj_ptr = (unsigned char)*poke_addr;
 						poke_addr++;
 					}
-					DeRef(*(object_ptr)pc[2]);
+					DeRef(*(object_ptr)pc[2]) 
 					*(object_ptr)pc[2] = (object)MAKE_SEQ(s1);
 					inc3pc();
 					thread();
 				}
 
-				DeRefx(*(object_ptr)pc[2]);
+				DeRefx(*(object_ptr)pc[2]) 
 
 				if (b)
 					*(object_ptr)pc[2] = (signed char)*poke_addr;
@@ -4922,7 +4922,7 @@ void do_exec(intptr_t *start_pc)
 				if (current_screen != MAIN_SCREEN)
 					MainScreen();
 				top = system_exec_call(*(object_ptr)pc[1], *(object_ptr)pc[2]);
-				DeRef(*(object_ptr)pc[3]);
+				DeRef(*(object_ptr)pc[3]) 
 				*(object_ptr)pc[3] = top;
 				pc += 4;
 				thread();
@@ -4937,7 +4937,7 @@ void do_exec(intptr_t *start_pc)
 				top = EOpen(*(object_ptr)pc[1],
 							*(object_ptr)pc[2],
 							*(object_ptr)pc[3]);
-				DeRef(*(object_ptr)pc[4]);
+				DeRef(*(object_ptr)pc[4]) 
 				*(object_ptr)pc[4] = top;
 				pc += 5;
 				thread();
@@ -4989,7 +4989,7 @@ void do_exec(intptr_t *start_pc)
 #else
 					b = mygetc(last_r_file_ptr); /* don't use <a> ! */
 #endif
-				DeRefx(*(object_ptr)pc[2]);
+				DeRefx(*(object_ptr)pc[2]) 
 				*(object_ptr)pc[2] = b;    //top;
 				inc3pc();
 				thread();
@@ -4999,7 +4999,7 @@ void do_exec(intptr_t *start_pc)
 			deprintf("case L_GETS:");
 				tpc = pc;
 				top = EGets(*(object_ptr)pc[1]);
-				DeRef(*(object_ptr)pc[2]);
+				DeRef(*(object_ptr)pc[2]) 
 				*(object_ptr)pc[2] = top;
 				inc3pc();
 				thread();
@@ -5007,7 +5007,7 @@ void do_exec(intptr_t *start_pc)
 
 			case L_PLATFORM: // only shrouded code needs this (for portability)
 			deprintf("case L_PLATFORM:");
-				DeRef(*(object_ptr)pc[1]);
+				DeRef(*(object_ptr)pc[1]) 
 				top = 1;  // Unknown platform
 #ifdef EUNIX
 				top = 3;  // (UNIX, called Linux for backwards compatibility)
@@ -5057,7 +5057,7 @@ void do_exec(intptr_t *start_pc)
 						top = MAKE_INT(get_key(FALSE));
 					}
 				}
-				DeRef(*(object_ptr)pc[1]);
+				DeRef(*(object_ptr)pc[1]) 
 				*(object_ptr)pc[1] = top;
 				pc += 2;
 				thread();
@@ -5110,7 +5110,7 @@ void do_exec(intptr_t *start_pc)
 				/* format string, value */
 				tpc = pc;
 				top = EPrintf(DOING_SPRINTF, *(object_ptr)pc[1], *(object_ptr)pc[2]);
-				DeRef(*(object_ptr)pc[3]);
+				DeRef(*(object_ptr)pc[3]) 
 				*(object_ptr)pc[3] = top;
 				pc += 4;
 				thread();
@@ -5120,7 +5120,7 @@ void do_exec(intptr_t *start_pc)
 			deprintf("case L_COMMAND_LINE:");
 				tpc = pc;
 				top = Command_Line();
-				DeRef(*(object_ptr)pc[1]);
+				DeRef(*(object_ptr)pc[1]) 
 				*(object_ptr)pc[1] = top;
 				pc += 2;
 				thread();
@@ -5141,7 +5141,7 @@ void do_exec(intptr_t *start_pc)
 			deprintf("case L_GETENV:");
 				tpc = pc;
 				top = EGetEnv( *(object_ptr)pc[1] );
-				DeRef(*(object_ptr)pc[2]);
+				DeRef(*(object_ptr)pc[2]) 
 				*(object_ptr)pc[2] = top;
 				inc3pc();
 				thread();
@@ -5152,7 +5152,7 @@ void do_exec(intptr_t *start_pc)
 				tpc = pc;
 				top = machine(*(object_ptr)pc[1],
 							  *(object_ptr)pc[2]);
-				DeRef(*(object_ptr)pc[3]);
+				DeRef(*(object_ptr)pc[3]) 
 				*(object_ptr)pc[3] = top;
 				pc += 4;
 				thread();
@@ -5172,7 +5172,7 @@ void do_exec(intptr_t *start_pc)
 				top = call_c(1, *(object_ptr)pc[1],
 								*(object_ptr)pc[2]);//callback could happen here
 				restore_privates((symtab_ptr)pc[3]);
-				DeRef(*(object_ptr)pc[4]);
+				DeRef(*(object_ptr)pc[4]) 
 				*(object_ptr)pc[4] = top;
 				tpc = pc + 5;
 				thread5();
@@ -5197,7 +5197,7 @@ void do_exec(intptr_t *start_pc)
 				top = task_create(*(object_ptr)pc[1],
 								  *(object_ptr)pc[2]);
 				a = pc[3];
-				DeRef(*(object_ptr)a);
+				DeRef(*(object_ptr)a) 
 				*(object_ptr)a = top;
 				pc += 4;
 				thread();
@@ -5223,7 +5223,7 @@ void do_exec(intptr_t *start_pc)
 			case L_TASK_SELF:
 			deprintf("case L_TASK_SELF:");
 				top = (object)pc[1];
-				DeRef(*(object_ptr)top);
+				DeRef(*(object_ptr)top) 
 				*(object_ptr)top = NewDouble(tcb[current_task].tid);
 				pc += 2;
 				thread();
@@ -5242,7 +5242,7 @@ void do_exec(intptr_t *start_pc)
 				tpc = pc;
 				top = task_list();
 				a = pc[1];
-				DeRef(*(object_ptr)a);
+				DeRef(*(object_ptr)a) 
 				*(object_ptr)a = top;
 				pc += 2;
 				thread(); // causes problem? - ok now
@@ -5253,7 +5253,7 @@ void do_exec(intptr_t *start_pc)
 				tpc = pc;
 				top = task_status(*(object_ptr)pc[1]);
 				a = pc[2];
-				DeRef(*(object_ptr)a);
+				DeRef(*(object_ptr)a) 
 				*(object_ptr)a = top;
 				inc3pc();
 				thread();
@@ -5422,7 +5422,7 @@ void do_exec(intptr_t *start_pc)
 				UserCleanup(i);
 				sym = TopLevelSub->u.subp.block;
 				while( (sym = sym->next_in_block) ){
-						DeRef(sym->obj);
+						DeRef(sym->obj) 
 				}
 				BREAK;
 
@@ -5431,7 +5431,7 @@ void do_exec(intptr_t *start_pc)
 					tpc = pc;
 					a = find_from(*(object_ptr)pc[1], *(object_ptr)pc[2], *(object_ptr)pc[3]);
 					top = MAKE_INT(a);
-					DeRef(*(object_ptr)pc[4]);
+					DeRef(*(object_ptr)pc[4]) 
 					*(object_ptr)pc[4] = top;
 					thread5();
 					BREAK;
@@ -5442,7 +5442,7 @@ void do_exec(intptr_t *start_pc)
 					a = e_match_from( *(object_ptr)pc[1], *(object_ptr)pc[2],
 							*(object_ptr) pc[3]);
 					top = MAKE_INT(a);
-					DeRef(*(object_ptr)pc[4]);
+					DeRef(*(object_ptr)pc[4]) 
 					*(object_ptr)pc[4] = top;
 
 					thread5();

@@ -903,7 +903,7 @@ s1_ptr SequenceCopy(register s1_ptr a)
 			RefDS(temp_ap);
 		}
 	}
-	DeRefSP(a);
+	DeRefSP(a) 
 	return c;
 }
 

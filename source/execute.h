@@ -191,12 +191,12 @@ struct replace_block {
 #define DeRefSP(a) if (--((s1_ptr)(a))->ref == 0 ) { de_reference((s1_ptr)MAKE_SEQ(a)); }
 
 /* de-ref a general object */
-#define DeRef(a) if (IS_DBL_OR_SEQUENCE(a)) { DeRefDS(a); }
+#define DeRef(a) if (IS_DBL_OR_SEQUENCE(a)) { DeRefDS(a)  }
 /* de-ref a general object in x.c and set tpc (for time-profile) */
-#define DeRefx(a) if (IS_DBL_OR_SEQUENCE(a)) { DeRefDSx(a); }
+#define DeRefx(a) if (IS_DBL_OR_SEQUENCE(a)) { DeRefDSx(a)  }
 
 /* Reassign Target object as a Sequence */
-#define ASSIGN_SEQ(t,s) DeRef(*(t)); *(t) = MAKE_SEQ(s);
+#define ASSIGN_SEQ(t,s) DeRef(*(t))  *(t) = MAKE_SEQ(s);
 
 
 #define UNIQUE(seq) (((s1_ptr)(seq))->ref == 1)
