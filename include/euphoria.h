@@ -1,7 +1,12 @@
 #ifndef EUPHORIA_H_
 #define EUPHORIA_H_
 
-#ifdef EWINDOWS
+#if defined(__WATCOMC__)
+#define EWATCOM
+#endif
+
+
+#ifdef _WIN32
 #include <windows.h>
 #endif
 
@@ -204,14 +209,20 @@ typedef struct s1 *s1_ptr;
 
 #define RefDS(a) ++(DBL_PTR(a)->ref)    
 #define RefDSn(a,n) (DBL_PTR(a)->ref += n)    
+
+/* These do not need semicolons after them: */
+
 #define Ref(a) if (IS_DBL_OR_SEQUENCE(a)) { RefDS(a); }
 #define Refn(a,n) if (IS_DBL_OR_SEQUENCE(a)) { RefDSn(a,n); }
-
 #define DeRefDS(a) if (--(DBL_PTR(a)->ref) == 0 ) { de_reference((s1_ptr)(a)); }
 #define DeRefDSi(a) if (--(DBL_PTR(a)->ref) == 0 ) { de_reference_i((s1_ptr)(a)); }
 
-#define DeRef(a) if (IS_DBL_OR_SEQUENCE(a)) { DeRefDS(a); }
-#define DeRefi(a) if (IS_DBL_OR_SEQUENCE(a)) { DeRefDSi(a); }
+/* Semicolons in these and others have to be removed: */
+// Ref(), Refn(), DeRefDS(), DeRefDSi(), DeRef(), DeRefi()
+// Ref(), DeRefDS(), DeRefDSx(), DeRefSP(), DeRef(), DeRefx()
+
+#define DeRef(a) if (IS_DBL_OR_SEQUENCE(a)) { DeRefDS(a) }
+#define DeRefi(a) if (IS_DBL_OR_SEQUENCE(a)) { DeRefDSi(a) }
 
 #define UNIQUE(seq) (((s1_ptr)(seq))->ref == 1)
 
@@ -381,7 +392,7 @@ void UserCleanup(int);
 extern int tcb_size;
 extern int current_task;
 extern double clock_period;
-#ifdef EWINDOWS
+#ifdef _WIN32
 #include <windows.h>
 
 // Address to a fiber:
@@ -456,4 +467,17 @@ extern int in_from_keyb;
 extern int TraceOn;
 int check_has_console();
 extern object eu_sizeof();
+
+#if _WIN32
+#define __global_routine __stdcall
+#define ONEFORWINDOWS 1
+#else
+#define __global_routine
+#define ONEFORWINDOWS 0
 #endif
+
+
+#endif
+
+int getKBchar();
+

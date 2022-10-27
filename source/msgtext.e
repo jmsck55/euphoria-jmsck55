@@ -381,8 +381,11 @@ public type enum message_index
     BAD_TRACE_LINES,
     BUILDDIR_IS_FILE,
     BUILDDIR_IS_UNDEFINED,
+	NUMBER_IS_TOO_SMALL,
+	NUMBER_IS_TOO_BIG,
     $
 end type
+
 
 constant StdErrMsgs = {
     { ADD_A_DIRECTORY_TO_BE_SEARCHED_FOR_INCLUDE_FILES, "Add a directory to be searched for include files" },
@@ -602,12 +605,12 @@ constant StdErrMsgs = {
     { MSG_1_WORD_MUST_BE_AN_IDENTIFIER             , "[1] word must be an identifier" },
     { MSG_1__MODULE_CONSTANT_2_IS_NOT_USED         , "[1] - module constant '[2]' is not used" },
     { MSG_1__MODULE_VARIABLE_2_IS_ASSIGNED_BUT_NEVER_USED, "[1] - module variable '[2]' is assigned but never used" },
-    { MSG_1__MODULE_VARIABLE_2_IS_NEVER_ASSIGNED_A_VALUE, "[1] - module variable '[2]' is never assigned a value" },
+    { MSG_1__MODULE_VARIABLE_2_IS_NEVER_ASSIGNED_A_VALUE, "[1] - module variable '[2]' is read from but never assigned a value" },
     { MSG_1__MODULE_VARIABLE_2_IS_NOT_USED         , "[1] - module variable '[2]' is not used" },
     { MSG_1__PARAMETER_2_OF_3_IS_ASSIGNED_BUT_NEVER_USED, "[1] - parameter '[2]' of [3]() is assigned but never used" },
     { MSG_1__PARAMETER_2_OF_3_IS_NOT_USED          , "[1] - parameter '[2]' of [3]() is not used" },
     { MSG_1__PRIVATE_VARIABLE_2_OF_3_IS_ASSIGNED_BUT_NEVER_USED, "[1] - private variable '[2]' of [3]() is assigned but never used" },
-    { MSG_1__PRIVATE_VARIABLE_2_OF_3_IS_NEVER_ASSIGNED_A_VALUE, "[1] - private variable '[2]' of [3] is never assigned a value" },
+    { MSG_1__PRIVATE_VARIABLE_2_OF_3_IS_NEVER_ASSIGNED_A_VALUE, "[1] - private variable \'[2]\' of [3] is read from but never assigned a value" },
     { MSG_1__PRIVATE_VARIABLE_2_OF_3_IS_NOT_USED   , "[1] - private variable '[2]' of [3]() is not used" },
     { MSG_CC_PREFIX                                , "Prefix for compiler and related binaries" },
     { MSG_DELETED                                  , "-deleted-" },
@@ -640,6 +643,8 @@ constant StdErrMsgs = {
     { NO_ROUTINE_ID_FOR_1                          , "no routine id for [1]" },
     { NO_VALUE_RETURNED_FROM_FUNCTION              , "no value returned from function" },
     { NO_WORD_WAS_FOUND_FOLLOWING_1                , "no 'word' was found following [1]" },
+	{ NUMBER_IS_TOO_SMALL                          , "The number specified here is too small."},
+	{ NUMBER_IS_TOO_BIG                            , "The number specified here is too big."},
     { NUMBER_NOT_FORMED_CORRECTLY                  , "number not formed correctly" },
     { OBSOLETE_IL_FILE_PLEASE_RECREATE_IT_USING_EUPHORIA_40_OR_LATER, "Obsolete .il file. Please recreate it using Euphoria 4.0 or later." },
     { ONLY_ENUMS_MAY_BE_DECLARED_AS_TYPES          , "Only enums may be declared as types" },
@@ -752,6 +757,7 @@ constant StdErrMsgs = {
     { YOU_MAY_NOW_USE_1_TO_RUN_2                   , "You may now use [1] to run [2]" },
     $
 }
+	
 
 public function GetMsgText( message_index MsgNum, integer WithNum = 1, object Args = {})
 	integer idx = 1

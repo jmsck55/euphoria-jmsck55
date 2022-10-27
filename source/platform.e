@@ -13,7 +13,7 @@ include std/os.e
 include std/text.e
 include std/io.e
 include std/dll.e
-
+include euphoria/info.e
 include global.e
 include msgtext.e
 
@@ -86,22 +86,36 @@ elsedef
 		SLASH_CHARS = "\\/:"
 	public sequence HOSTNL = "\r\n" -- may change if cross-translating
 end ifdef
+constant M_MACHINE_INFO = 106
+if compare({version_major(), version_minor(), version_patch()}, {4,2,0}) < 0 then
 
-ifdef ARM then
-	IARM = 1
-elsifdef X86 then
-	IX86 = 1
-elsifdef X86_64 then
-	IX86_64 = 1
-elsedef
-	-- building with earlier versions needs this:
-	if sizeof( dll:C_POINTER ) = 4 then
-		-- could technically be ARM here, but we'll default to the most common case:
-		IX86 = 1
-	else
-		IX86_64 = 1
-	end if
-end ifdef
+  ifdef ARM then
+      IARM = 1
+  elsifdef X86 then
+      IX86 = 1
+  elsifdef X86_64 then
+      IX86_64 = 1
+  elsedef
+      -- building with earlier versions needs this:
+      if sizeof( dll:C_POINTER ) = 4 then
+          -- could technically be ARM here, but we'll default to the most common case:
+          IX86 = 1
+      else
+          IX86_64 = 1
+      end if
+  end ifdef
+else    
+	sequence machine_param = machine_func(M_MACHINE_INFO, {})
+	switch machine_param[1] do
+	    case "X86" then
+	        IX86 = 1
+	    case "X86_64" then
+	        IX86_64 = 1
+	    case "ARM" then
+	        IARM = 1
+	end switch
+	set_target_arch(machine_param[1])	
+end if	
 
 TX86    = IX86
 TX86_64 = IX86_64
