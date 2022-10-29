@@ -210,8 +210,8 @@ typedef struct s1 *s1_ptr;
 #define DeRefDS(a) if (--(DBL_PTR(a)->ref) == 0 ) { de_reference((s1_ptr)(a)); }
 #define DeRefDSi(a) if (--(DBL_PTR(a)->ref) == 0 ) { de_reference_i((s1_ptr)(a)); }
 
-#define DeRef(a) if (IS_DBL_OR_SEQUENCE(a)) { DeRefDS(a); }
-#define DeRefi(a) if (IS_DBL_OR_SEQUENCE(a)) { DeRefDSi(a); }
+#define DeRef(a) if (IS_DBL_OR_SEQUENCE(a)) { DeRefDS(a) }
+#define DeRefi(a) if (IS_DBL_OR_SEQUENCE(a)) { DeRefDSi(a) }
 
 #define UNIQUE(seq) (((s1_ptr)(seq))->ref == 1)
 
